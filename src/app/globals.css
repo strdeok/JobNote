@@ -27,6 +27,14 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "GmarketSansBold";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
   width: 100%;
@@ -55,11 +63,23 @@ ul {
 
 /* 스크롤바 전체 영역 스타일 */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 0.3rem; 
-  background-color: transparent; 
+  width: 0.3rem;
+  background-color: transparent;
 }
 
 /* 스크롤바 막대 스타일 */
-.custom-scrollbar::-webkit-scrollbar-thumb{
-  background-color: #DFDFDF;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #dfdfdf;
+}
+
+.font-gmarket {
+  font-family: "GmarketSansBold";
+}
+
+.text-main {
+  @apply text-[#FF9016];
+}
+
+.bg-main {
+  @apply bg-[#FF9016];
 }
