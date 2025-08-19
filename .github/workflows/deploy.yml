@@ -50,9 +50,9 @@ jobs:
 
           source-directory: 'output'
 
-          destination-github-username: [strdeok]
+          destination-github-username: strdeok
 
-          destination-repository-name: [JobNote]
+          destination-repository-name: JobNote
 
           user-email: ${{ secrets.EMAIL }}
 
