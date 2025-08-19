@@ -10,12 +10,9 @@ export default function AfterLoginLayout({
   return (
     <>
       <Header />
-      <div id="gray-bar" className="bg-[#F5F5F5] w-full h-36" />
+      <PageTitle />
       <SideNavigation />
-      <div className="relative left-80 w-5xl">
-        <PageTitle />
-        {children}
-      </div>
+      <div className="relative left-80 w-5xl">{children}</div>
     </>
   );
 }
