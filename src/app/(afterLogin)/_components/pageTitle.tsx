@@ -1,29 +1,29 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useSelectedLayoutSegments } from "next/navigation";
 import WarningCircleIcon from "@/assets/WarningCircle.svg";
 import MessageBubble from "./messageBubble";
 import { useState } from "react";
 
 export default function PageTitle() {
   const [isActivateMessage, setIsActivateMessage] = useState(false);
+  const segments = useSelectedLayoutSegments();
 
-  const router = usePathname();
   const title = () => {
-    switch (router) {
-      case "/applications":
+    switch (segments[0]) {
+      case "applications":
         return "지원 현황";
-      case "/documents":
-        return "문서 관리";
-      case "/schedule":
+      case "documents":
+        return segments.length > 1 ? "문서 상세보기" : "문서 관리";
+      case "schedule":
         return "일정";
-      case "/dashboard":
+      case "dashboard":
         return "Dashboard";
     }
   };
 
   const message = () => {
-    switch (router) {
+    switch (segments[0]) {
       case "/applications":
         return "지원 현황";
       case "/documents":
@@ -38,7 +38,7 @@ export default function PageTitle() {
     <div className="bg-[#F5F5F5] w-full h-36 relative">
       <div className="absolute bottom-6 left-80 flex flex-row items-center gap-2">
         <h1 className="font-medium text-4xl">{title()}</h1>
-        {router !== "/dashboard" && (
+        {segments[0] !== "/dashboard" && (
           <div className="relative flex items-center">
             <div
               onMouseEnter={() => {
