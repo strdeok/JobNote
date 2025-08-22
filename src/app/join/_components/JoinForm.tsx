@@ -7,8 +7,11 @@ import EyeInvisible from "@/assets/EyeInvisible.svg";
 import PrivacyPolicy from "./PrivacyPolicy";
 import ServiceTermsSection from "./ServiceTermsSection";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function JoinForm() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
 
@@ -110,10 +113,11 @@ export default function JoinForm() {
     axios
       .post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/signup`, data)
       .then(() => {
-        alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.")
+        alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.");
+        router.replace("/login");
       })
       .catch((err) => {
-        const error = (err.response.data.message);
+        const error = err.response.data.message;
 
         switch (error) {
           case "이미 가입된 이메일입니다.":
