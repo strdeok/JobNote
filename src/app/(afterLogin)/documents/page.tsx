@@ -2,13 +2,21 @@ import PlusIcon from "@/assets/Plus.svg";
 import VersionBadge from "./_components/versionBadge";
 import UploadButton from "./_components/uploadButton";
 import CompanyNameBadge from "./_components/companyNameBadge";
+import Link from "next/link";
+import Divider from "./_components/divider";
+
 
 export default function DocumentsPage() {
-  const Divider = () => {
-    return (
-      <div className="w-px h-5 bg-black/5 absolute top-1/2 right-0 -translate-y-1/2" />
-    );
-  };
+  const documents = [
+    {
+      id: 0,
+      type: "RESUME",
+      title: "이력서",
+      lastModifiedDate: "2025-08-21",
+      version: "1",
+      companyName: ["카카오", "네이버"],
+    },
+  ];
 
   const th_style = "relative text-center p-4 font-medium";
   const td_stytle = "text-center p-4";
@@ -38,26 +46,34 @@ export default function DocumentsPage() {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-b-black/5">
-            <td className={td_stytle}>
-              <button className="p-0.5 border border-[#D9D9D9] flex justify-center items-center rounded-xs">
-                <PlusIcon />
-              </button>
-            </td>
-            <td className={td_stytle}>이력서</td>
-            <td className={td_stytle}>
-              <VersionBadge>V1</VersionBadge>
-            </td>
-            <td>
-              <UploadButton />
-            </td>
-            <td className={td_stytle}>
-              <div className="flex flex-row gap-2 justify-center flex-wrap">
-                <CompanyNameBadge>카카오</CompanyNameBadge>
-              </div>
-            </td>
-            <td className={td_stytle}>2025/08/09 09:00</td>
-          </tr>
+          {documents.map((doc) => {
+            return (
+              <tr key={doc.id} className="border-b border-b-black/5">
+                <td className={td_stytle}>
+                  <button className="p-0.5 border border-[#D9D9D9] flex justify-center items-center rounded-xs">
+                    <PlusIcon />
+                  </button>
+                </td>
+                <td className={td_stytle}>
+                  <Link href={`/documents/${doc.id}`}>{doc.title}</Link>
+                  </td>
+                <td className={td_stytle}>
+                  <VersionBadge>{doc.version}</VersionBadge>
+                </td>
+                <td>
+                  <UploadButton />
+                </td>
+                <td className={td_stytle}>
+                  <div className="flex flex-row gap-2 justify-center flex-wrap">
+                    {doc.companyName.map((companyName) => {
+                      return <CompanyNameBadge key={companyName}>{companyName}</CompanyNameBadge>;
+                    })}
+                  </div>
+                </td>
+                <td className={td_stytle}>{doc.lastModifiedDate}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </>
