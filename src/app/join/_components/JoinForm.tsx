@@ -6,7 +6,7 @@ import FilledCheckCircle from "@/assets/FilledCheckCircle.svg";
 import EyeInvisible from "@/assets/EyeInvisible.svg";
 import PrivacyPolicy from "./PrivacyPolicy";
 import ServiceTermsSection from "./ServiceTermsSection";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export default function JoinForm() {
   const [email, setEmail] = useState("");
@@ -110,12 +110,13 @@ export default function JoinForm() {
     axios
       .post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/signup`, data)
       .then(() => {
-        alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.")
+        alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.");
       })
       .catch((err) => {
-        const error = (err.response.data.message);
+        const error = err as AxiosError<{ message: string }>;
+        const message = error.response?.data?.message;
 
-        switch (error) {
+        switch (message) {
           case "이미 가입된 이메일입니다.":
             alert("이미 가입된 이메일입니다.");
             break;
