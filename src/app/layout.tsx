@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ClientProvider from "./clientProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,10 +15,12 @@ export default function RootLayout({
   modal: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <body className={`antialiased`}>
-        {children}
-        {modal}
+        <ClientProvider>
+          {children}
+          {modal}
+        </ClientProvider>
       </body>
     </html>
   );
