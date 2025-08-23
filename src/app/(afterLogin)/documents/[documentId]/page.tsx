@@ -1,12 +1,15 @@
 import DocumentDescription from "./_components/documentDescription";
 import PdfViewer from "./_components/previewDocuments";
 
-type Props = {
-  params: { documentId: string };
-};
+type Params = Promise<{ documentId: string }>;
 
-export default function DetailedDocumentsPage({ params }: Props) {
-  console.log(params.documentId);
+export default async function DetailedDocumentsPage({
+  params,
+}: {
+  params: Params;
+}) {
+  const { documentId } = await params;
+  console.log(documentId);
   return (
     <div className="flex flex-row pb-24 mt-8 gap-10">
       <PdfViewer />
