@@ -112,7 +112,7 @@ export default function JoinForm() {
       .then(() => {
         alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.");
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         const error = err as AxiosError<{ message: string }>;
         const message = error.response?.data?.message;
 
