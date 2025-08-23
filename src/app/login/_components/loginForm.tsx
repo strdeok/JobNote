@@ -120,7 +120,7 @@ export default function LoginForm() {
           {passwordError ? passwordError : ""}
         </span>
 
-        <Link href="/find-password" className="text-[8px] text-[#616161]">
+        <Link href="login/find-password" className="text-[8px] text-[#616161]">
           비밀번호 찾기
         </Link>
       </div>
