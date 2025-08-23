@@ -20,9 +20,9 @@ export default function DocumentDescription() {
 
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl mb-6">이력서</h2>
-        {companies.map((company) => {
+        {companies.map((company, index) => {
           return (
-            <section className="border border-[#747474] rounded-sm px-5 py-2.5 flex flex-col gap-5">
+            <section key={company.name + index} className="border border-[#747474] rounded-sm px-5 py-2.5 flex flex-col gap-5">
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row gap-4 items-center">
                   <h3 className="font-semibold text-2xl">{company.name}</h3>
