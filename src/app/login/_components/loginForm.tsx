@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import EyeInvisible from "@/assets/EyeInvisible.svg";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { AxiosError } from "axios";
 import { login } from "@/lib/auth";
+import EyeInvisible from "@/assets/EyeInvisible.svg";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -52,8 +53,9 @@ export default function LoginForm() {
       login(email, password);
 
       router.replace("/dashboard");
-    } catch (err: any) {
-      const message = err.response?.data?.message;
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>; // AxiosError 타입 지정
+    const message = error.response?.data?.message;
 
       if (message === "아이디 또는 비밀번호가 잘못되었습니다") {
         alert("아이디 또는 비밀번호가 잘못되었습니다.");
