@@ -20,6 +20,14 @@ export const reissue = async () => {
   return res;
 };
 
+// 로그아웃 요청
+export const logout = async () => {
+  const res = await axios.post(`${API_URL}/api/v1/users/logout`, null, {
+    withCredentials: true,
+  });
+  return res;
+}
+
 // 유저 정보 가져오기
 export const fetchUserInfo = async () => {
   const res = await axios.get(`${API_URL}/api/v1/users/profile`, {
