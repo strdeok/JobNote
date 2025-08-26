@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 // 로그인 요청
 export const login = async (email: string, password: string) => {
   const res = await axios.post(
-    `${API_URL}/login`,
+    `${API_URL}/api/v1/users/login`,
     { email, password },
     { withCredentials: true }
   );
