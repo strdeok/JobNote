@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import EmptyCheckCircle from "@/assets/EmptyCheckCircle.svg";
 import FilledCheckCircle from "@/assets/FilledCheckCircle.svg";
 import EyeInvisible from "@/assets/EyeInvisible.svg";
 import PrivacyPolicy from "./PrivacyPolicy";
 import ServiceTermsSection from "./ServiceTermsSection";
+import { useRouter } from "next/navigation";
+import axios, { AxiosError } from "axios";
 
 export default function JoinForm() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
 
@@ -98,6 +102,37 @@ export default function JoinForm() {
     !firstAgree ||
     !secondAgree;
 
+  const submitSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = {
+      email,
+      password,
+      nickname: name,
+    };
+
+    axios
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/signup`, data)
+      .then(() => {
+        alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.");
+        router.replace("/login");
+      })
+      .catch((err: unknown) => {
+        const error = err as AxiosError<{ message: string }>;
+        const message = error.response?.data?.message;
+
+        switch (message) {
+          case "이미 가입된 이메일입니다.":
+            alert("이미 가입된 이메일입니다.");
+            break;
+          case "이미 사용중인 닉네임입니다.":
+            alert("이미 사용중인 닉네임입니다.");
+
+          default:
+            break;
+        }
+      });
+  };
+
   // 스타일 변수
   const inputWrapper = "flex flex-col gap-2";
   const inputStyle = "border border-[#D9D9D9] rounded-xs h-8 px-2";
@@ -106,7 +141,12 @@ export default function JoinForm() {
   const checkButton = "hover:cursor-pointer";
 
   return (
-    <form className="flex flex-col w-full gap-8 text-sm">
+    <form
+      className="flex flex-col w-full gap-8 text-sm"
+      onSubmit={(e) => {
+        submitSignUp(e);
+      }}
+    >
       {/* 이메일 */}
       <div className={inputWrapper}>
         <label htmlFor="id" className="text-[#424242]">

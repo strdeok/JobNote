@@ -12,7 +12,7 @@ export default function AfterLoginLayout({
       <Header />
       <PageTitle />
       <SideNavigation />
-      <div className="relative left-80 w-5xl">{children}</div>
+      <div className="ml-80 pr-16">{children}</div>
     </>
   );
 }

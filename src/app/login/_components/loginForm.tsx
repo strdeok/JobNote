@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AxiosError } from "axios";
+import { login } from "@/lib/auth";
 import EyeInvisible from "@/assets/EyeInvisible.svg";
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -42,34 +47,20 @@ export default function LoginForm() {
 
   const isDisabled = !email || !validateEmail(email) || !password;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 가짜 api
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+    login(email, password)
+      .then(() => {
+        router.replace("/dashboard");
+      })
+      .catch((err) => {
+        const error = err as AxiosError<{ message: string }>; // AxiosError 타입 지정
+        const message = error.response?.data?.message;
+        if (message === "아이디 또는 비밀번호가 잘못되었습니다.") {
+          alert("아이디 또는 비밀번호가 잘못되었습니다.");
+        }
       });
-
-      if (!res.ok) throw new Error("로그인 실패");
-
-      const result = await res.json();
-      console.log(result);
-    } catch (error) {
-      console.error(error);
-
-      // 에러처리
-      switch (error) {
-        case "존재하지 않는 아이디":
-          setEmailError("아이디를 다시 확인해주세요.");
-        case "비밀번호 오류":
-          setPasswordError("비밀번호를 다시 확인해주세요.");
-      }
-    }
   };
 
   return (
@@ -148,3 +139,4 @@ export default function LoginForm() {
     </form>
   );
 }
+
