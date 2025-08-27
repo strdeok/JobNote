@@ -46,26 +46,22 @@ export default function LoginForm() {
   };
 
   const isDisabled = !email || !validateEmail(email) || !password;
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      await login(email, password);
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      window.location.href = "/dashboard";
-    } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      const message = error.response?.data?.message;
-
-      if (message === "아이디 또는 비밀번호가 잘못되었습니다.") {
-        alert("아이디 또는 비밀번호가 잘못되었습니다.");
-      } else {
-        alert("로그인 중 오류가 발생했습니다.");
-      }
-    }
+    login(email, password)
+      .then((res) => {
+        router.replace("/dashboard");
+      })
+      .catch((err) => {
+        const error = err as AxiosError<{ message: string }>;
+        const message = error.response?.data?.message;
+        if (message) {
+          alert(message);
+        } else {
+          alert("알 수 없는 오류가 발생했습니다.");
+        }
+      });
   };
 
   return (
