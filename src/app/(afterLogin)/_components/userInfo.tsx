@@ -6,7 +6,12 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 export default function UserInfo() {
   const { data, error, isLoading } = useUserInfo();
   if (error) {
-    return <div>오류가 발생하였습니다. 잠시 후 시도해주세요.</div>;
+    console.log(error)
+    return (
+      <div className="text-red-500 text-center">
+        오류가 발생하였습니다. <br /> 잠시 후 시도해주세요.
+      </div>
+    );
   }
 
   return (
