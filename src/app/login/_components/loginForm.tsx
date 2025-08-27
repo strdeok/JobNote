@@ -47,20 +47,25 @@ export default function LoginForm() {
 
   const isDisabled = !email || !validateEmail(email) || !password;
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    login(email, password)
-      .then(() => {
-        router.replace("/dashboard");
-      })
-      .catch((err) => {
-        const error = err as AxiosError<{ message: string }>; // AxiosError 타입 지정
-        const message = error.response?.data?.message;
-        if (message === "아이디 또는 비밀번호가 잘못되었습니다.") {
-          alert("아이디 또는 비밀번호가 잘못되었습니다.");
-        }
-      });
+    try {
+      await login(email, password);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      window.location.href = "/dashboard";
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      const message = error.response?.data?.message;
+
+      if (message === "아이디 또는 비밀번호가 잘못되었습니다.") {
+        alert("아이디 또는 비밀번호가 잘못되었습니다.");
+      } else {
+        alert("로그인 중 오류가 발생했습니다.");
+      }
+    }
   };
 
   return (
@@ -139,4 +144,3 @@ export default function LoginForm() {
     </form>
   );
 }
-
