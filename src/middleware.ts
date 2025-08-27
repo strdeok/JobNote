@@ -55,5 +55,5 @@ function redirectToLogin(request: NextRequest) {
 
 // 미들웨어가 실행될 경로를 지정합니다.
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|login|join$).*)"],
 };
