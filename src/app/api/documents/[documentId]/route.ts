@@ -1,8 +1,12 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function GET({ params }: { params: { documentId: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { documentId: string } }
+) {
   const { documentId } = params;
+
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
@@ -31,7 +35,6 @@ export async function GET({ params }: { params: { documentId: string } }) {
     }
 
     const data = await response.json();
-
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
@@ -41,7 +44,10 @@ export async function GET({ params }: { params: { documentId: string } }) {
   }
 }
 
-export async function DELETE({ params }: { params: { documentId: string } }) {
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { documentId: string } }
+) {
   const { documentId } = params;
 
   try {
@@ -72,7 +78,6 @@ export async function DELETE({ params }: { params: { documentId: string } }) {
     }
 
     const data = await response.json();
-
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
