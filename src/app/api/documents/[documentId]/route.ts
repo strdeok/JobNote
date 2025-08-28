@@ -46,9 +46,9 @@ export async function GET(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { documentId: string } }
+  { params }: { params: Promise<{ documentId: string }> }
 ) {
-  const { documentId } = params;
+  const { documentId } = await params;
 
   try {
     const cookieStore = await cookies();
