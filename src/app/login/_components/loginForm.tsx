@@ -50,7 +50,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     login(email, password)
-      .then((res) => {
+      .then(() => {
         router.replace("/dashboard");
       })
       .catch((err) => {

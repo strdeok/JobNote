@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function GET() {
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ documentId: string }> }
+) {
+  const { documentId } = await params;
+  const body = await req.json();
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
@@ -14,13 +19,14 @@ export async function GET() {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents/upload/${documentId}`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Cookie: `access_token=${accessToken}`,
         },
+        body: JSON.stringify(body),
       }
     );
 

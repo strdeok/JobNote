@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST(request: Request) {
+  const { fileName, contentType, fileSize } = await request.json();
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
     if (!accessToken) {
       return NextResponse.json(
         { message: "Authentication required" },
@@ -14,13 +14,18 @@ export async function GET() {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/s3/presigned`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Cookie: `access_token=${accessToken}`,
         },
+        body: JSON.stringify({
+          fileName,
+          contentType,
+          fileSize,
+        }),
       }
     );
 
@@ -34,7 +39,7 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { message: `An unexpected error occurred. ${error}` },
+      { success: false, message: `Presigned URL 발급 실패 ${error}` },
       { status: 500 }
     );
   }

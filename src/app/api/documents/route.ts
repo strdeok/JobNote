@@ -14,7 +14,7 @@ export async function GET() {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents`,
       {
         method: "GET",
         headers: {
