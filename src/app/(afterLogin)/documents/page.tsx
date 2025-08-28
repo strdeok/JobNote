@@ -1,12 +1,15 @@
+"use client";
+
 import PlusIcon from "@/assets/Plus.svg";
 import VersionBadge from "./_components/versionBadge";
 import UploadButton from "./_components/uploadButton";
 import CompanyNameBadge from "./_components/companyNameBadge";
 import Link from "next/link";
 import Divider from "./_components/divider";
-
+import { useDocuments } from "@/hooks/useDocuments";
 
 export default function DocumentsPage() {
+  const { data, error, isLoading } = useDocuments();
   const documents = [
     {
       id: 0,
@@ -22,8 +25,15 @@ export default function DocumentsPage() {
   const td_stytle = "text-center p-4";
   return (
     <>
-      <h2 className="text-3xl font-medium mt-8">나의 문서 목록</h2>
-
+      <div className="flex flex-row justify-between items-center mt-8">
+        <h2 className="text-3xl font-medium">나의 문서 목록</h2>
+        <Link
+          href="/documents/new"
+          className="bg-main rounded-xs text-white py-2 px-4"
+        >
+          문서 등록
+        </Link>
+      </div>
       <table className="table-fixed w-full border-collapse mt-4">
         <thead>
           <tr className="border-b border-b-black/5 bg-[#FAFAFA]">
@@ -56,7 +66,7 @@ export default function DocumentsPage() {
                 </td>
                 <td className={td_stytle}>
                   <Link href={`/documents/${doc.id}`}>{doc.title}</Link>
-                  </td>
+                </td>
                 <td className={td_stytle}>
                   <VersionBadge>{doc.version}</VersionBadge>
                 </td>
@@ -66,7 +76,11 @@ export default function DocumentsPage() {
                 <td className={td_stytle}>
                   <div className="flex flex-row gap-2 justify-center flex-wrap">
                     {doc.companyName.map((companyName) => {
-                      return <CompanyNameBadge key={companyName}>{companyName}</CompanyNameBadge>;
+                      return (
+                        <CompanyNameBadge key={companyName}>
+                          {companyName}
+                        </CompanyNameBadge>
+                      );
                     })}
                   </div>
                 </td>
