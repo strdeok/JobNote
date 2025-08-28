@@ -1,14 +1,11 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-interface RouteContext {
-  params: {
-    documentId: string;
-  };
-}
-
-export async function GET(_req: Request, context: RouteContext) {
-  const { documentId } = context.params;
+export async function GET(
+  _req: Request,
+  { params }: { params: { documentId: string } }
+) {
+  const { documentId } = params;
 
   try {
     const cookieStore = await cookies();
