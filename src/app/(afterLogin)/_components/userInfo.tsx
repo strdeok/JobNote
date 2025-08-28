@@ -6,7 +6,6 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 export default function UserInfo() {
   const { data, error, isLoading } = useUserInfo();
   if (error) {
-    console.log(error)
     return (
       <div className="text-red-500 text-center">
         오류가 발생하였습니다. <br /> 잠시 후 시도해주세요.
@@ -20,7 +19,10 @@ export default function UserInfo() {
         <LoadingSpinner />
       ) : (
         <>
-          <div className="bg-[#BFBFBF] rounded-full size-16"></div>
+          <img
+            src={data?.avatarUrl}
+            className="bg-[#BFBFBF] rounded-full size-16"
+          ></img>
           <span className="text-2xl font-medium">{data?.nickname}</span>
         </>
       )}
