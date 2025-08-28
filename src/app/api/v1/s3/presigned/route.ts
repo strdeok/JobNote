@@ -37,10 +37,9 @@ export async function POST(request: Request) {
     const data = await response.json();
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    console.error("presigned 발급 오류:", error);
+  } catch (error) {
     return NextResponse.json(
-      { success: false, message: "Presigned URL 발급 실패" },
+      { success: false, message: `Presigned URL 발급 실패 ${error}` },
       { status: 500 }
     );
   }

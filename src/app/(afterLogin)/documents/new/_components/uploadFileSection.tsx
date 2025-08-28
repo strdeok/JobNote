@@ -1,10 +1,6 @@
 import React from "react";
 import { useUploadFile } from "@/hooks/useFile";
 
-interface UploadFileSectionProps {
-  onUploadSuccess: (url: string) => void;
-}
-
 export default function UploadFileSection({
   setFileUrl,
   setFileKey,
@@ -26,7 +22,7 @@ export default function UploadFileSection({
       fileSize: selectedFile.size,
     };
 
-    setFileInfo(selectedFile)
+    setFileInfo(selectedFile);
 
     uploadMutation.mutate(
       { file: selectedFile, fileInfo },

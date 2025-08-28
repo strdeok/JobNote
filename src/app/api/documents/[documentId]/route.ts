@@ -35,7 +35,7 @@ export async function GET({ params }: { params: { documentId: string } }) {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { message: "An unexpected error occurred." },
+      { message: `An unexpected error occurred. ${error}` },
       { status: 500 }
     );
   }
@@ -76,7 +76,7 @@ export async function DELETE({ params }: { params: { documentId: string } }) {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { message: "An unexpected error occurred." },
+      { message: `An unexpected error occurred. ${error}` },
       { status: 500 }
     );
   }
