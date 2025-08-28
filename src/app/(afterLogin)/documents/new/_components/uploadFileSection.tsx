@@ -8,7 +8,7 @@ export default function UploadFileSection({
 }: {
   setFileUrl: (url: string) => void;
   setFileKey: (key: string) => void;
-  setFileInfo: (info: any) => void;
+  setFileInfo: (info: File) => void;
 }) {
   const uploadMutation = useUploadFile();
 

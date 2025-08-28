@@ -37,7 +37,7 @@ export async function POST({ params }: { params: { documentId: string } }) {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { message: "An unexpected error occurred." },
+      { message: `An unexpected error occurred. ${error}` },
       { status: 500 }
     );
   }
