@@ -1,4 +1,4 @@
-import { usePatchUserAvatar } from "@/hooks/useAvatar";
+import { usePatchUserAvatar } from "@/hooks/useUser";
 import { uploadFile } from "@/lib/file";
 
 export default function SetAvatarScreen() {

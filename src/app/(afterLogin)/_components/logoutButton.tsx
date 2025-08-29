@@ -1,15 +1,17 @@
 "use client";
 
 import { logout } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function LogoutButton() {
+  const route = useRouter();
   const handleLogout = () => {
     logout()
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        route.replace("/login");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        alert("오류가 발생하였습니다. 잠시 후에 다시 시도해주세요.");
       });
   };
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import LoadingSpinner from "@/app/_components/loadingSpinner";
-import { useUserInfo } from "@/hooks/useUserInfo";
+import { useUserInfo } from "@/hooks/useUser";
 
 export default function UserInfo() {
   const { data, error, isLoading } = useUserInfo();

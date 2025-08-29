@@ -1,8 +1,7 @@
-// app/api/login/route.ts
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function DELETE() {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
@@ -15,12 +14,12 @@ export async function POST() {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/logout`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/withdraw`,
       {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Cookie: `access_token=${accessToken}`,
         },
       }
     );
@@ -30,15 +29,12 @@ export async function POST() {
       return NextResponse.json(errorData, { status: response.status });
     }
 
-    const responseBody = await response.json();
+    const data = await response.json();
 
-    const nextResponse = NextResponse.json(responseBody);
-
-    return nextResponse;
+    return NextResponse.json(data);
   } catch (error) {
-    console.error(error);
     return NextResponse.json(
-      { message: "An unexpected error occurred." },
+      { message: `An unexpected error occurred. ${error}` },
       { status: 500 }
     );
   }

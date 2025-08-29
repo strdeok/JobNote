@@ -18,7 +18,7 @@ export const reissue = async () => {
 
 // 로그아웃 요청
 export const logout = async () => {
-  const res = await axios.post(`/api/auth/logout`, null, {
+  const res = await axios.post(`/api/v1/users/logout`, null, {
     withCredentials: true,
   });
   return res;

@@ -1,10 +1,37 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+function decodeJWT(token: string) {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    return JSON.parse(Buffer.from(payload, "base64").toString("utf-8"));
+  } catch (e) {
+    console.error("JWT decode error:", e);
+    return null;
+  }
+}
+
 export function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get("access_token");
+  const accessToken = request.cookies.get("access_token")?.value;
 
   const { pathname } = request.nextUrl;
+
+  if (accessToken) {
+    const decoded = decodeJWT(accessToken);
+
+    if (decoded?.exp) {
+      const now = Math.floor(Date.now() / 1000);
+
+      console.log(now >= decoded.exp);
+
+      // 만료 시 /api/auth/reissue로 리다이렉트
+      if (now >= decoded.exp) {
+        console.log("⚠️ Access Token 만료됨 → /api/auth/reissue로 이동");
+        return NextResponse.redirect(new URL("/api/auth/reissue", request.url));
+      }
+    }
+  }
 
   // 로그인이 필요한 보호된 페이지
   const protectedPaths = ["/dashboard", "/mypage"];

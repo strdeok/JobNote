@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import SetAvatarScreen from "./setAvatar";
+import SetPasswordScreen from "./setPassword";
+import SetNickNameScreen from "./setNickName";
+import DeleteAccountScreen from "./setDeleteAccount";
 
 export default function SelectSection() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -10,6 +13,12 @@ export default function SelectSection() {
   switch (selectedOption) {
     case "avatar":
       return <SetAvatarScreen />;
+    case "nickname":
+      return <SetNickNameScreen />;
+    case "password":
+      return <SetPasswordScreen />;
+    case "delete":
+      return <DeleteAccountScreen />;
 
     default:
       return (
