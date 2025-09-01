@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function DELETE(req: Request) {
   const authHeader = req.headers.get("authorization");
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/withdraw`,
       {
-        method: "GET",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: authHeader || "",

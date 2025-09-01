@@ -1,16 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const authHeader = req.headers.get("authorization");
+export async function PATCH(request: NextRequest) {
   try {
+    const body = await request.json();
+    const authHeader = request.headers.get("authorization");
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/avatar`,
       {
-        method: "GET",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: authHeader || "",
         },
+        body: JSON.stringify({ avatarUrl: body.avatarUrl }),
       }
     );
 

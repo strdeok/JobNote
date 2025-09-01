@@ -1,12 +1,12 @@
 "use client";
 
 import LoadingSpinner from "@/app/_components/loadingSpinner";
-import { useUserInfo } from "@/hooks/useUserInfo";
+import { useUserInfo } from "@/hooks/useUser";
+import Image from "next/image";
 
 export default function UserInfo() {
   const { data, error, isLoading } = useUserInfo();
   if (error) {
-    console.log(error)
     return (
       <div className="text-red-500 text-center">
         오류가 발생하였습니다. <br /> 잠시 후 시도해주세요.
@@ -20,7 +20,11 @@ export default function UserInfo() {
         <LoadingSpinner />
       ) : (
         <>
-          <div className="bg-[#BFBFBF] rounded-full size-16"></div>
+          <Image
+            src={data?.avatarUrl}
+            alt="avatar"
+            className="bg-[#BFBFBF] rounded-full size-16"
+          ></Image>
           <span className="text-2xl font-medium">{data?.nickname}</span>
         </>
       )}

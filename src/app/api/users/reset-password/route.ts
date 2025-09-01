@@ -1,16 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const authHeader = req.headers.get("authorization");
+export async function PATCH(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization");
+    const body = await request.json();
+
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/reset-password`,
       {
-        method: "GET",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: authHeader || "",
         },
+        body: JSON.stringify({ newPassword: body.newPassword }),
       }
     );
 

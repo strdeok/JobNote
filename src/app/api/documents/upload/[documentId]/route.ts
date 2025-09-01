@@ -1,16 +1,23 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ documentId: string }> }
+) {
+  const { documentId } = await params;
+  const body = await req.json();
   const authHeader = req.headers.get("authorization");
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents/upload/${documentId}`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: authHeader || "",
         },
+        body: JSON.stringify(body),
       }
     );
 
