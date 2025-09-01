@@ -3,15 +3,7 @@ import { cookies } from "next/headers";
 
 export async function PATCH(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const authHeader = request.headers.get("authorization");
     const body = await request.json();
 
     console.log(body.nickname);
@@ -22,7 +14,7 @@ export async function PATCH(request: NextRequest) {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `access_token=${accessToken}`,
+          Authorization: authHeader || "",
         },
         body: JSON.stringify({ nickname: body.nickname }),
       }

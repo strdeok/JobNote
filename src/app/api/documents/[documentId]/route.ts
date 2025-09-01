@@ -2,29 +2,20 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ documentId: string }> }
 ) {
   const { documentId } = await params;
+  const authHeader = req.headers.get("authorization");
 
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents/${documentId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `access_token=${accessToken}`,
+          Authorization: authHeader || "",
         },
       }
     );
@@ -45,29 +36,19 @@ export async function GET(
 }
 
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ documentId: string }> }
 ) {
   const { documentId } = await params;
-
+  const authHeader = req.headers.get("authorization");
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents/${documentId}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `access_token=${accessToken}`,
+          Authorization: authHeader || "",
         },
       }
     );

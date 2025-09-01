@@ -3,23 +3,15 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const { fileName, contentType, fileSize } = await request.json();
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const authHeader = request.headers.get("authorization");
   try {
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/s3/presigned`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `access_token=${accessToken}`,
+          Authorization: authHeader || "",
         },
         body: JSON.stringify({
           fileName,

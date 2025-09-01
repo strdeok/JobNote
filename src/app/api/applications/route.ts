@@ -1,21 +1,19 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const refreshToken = cookieStore.get("refresh_token")?.value;
-    const authHeader = req.headers.get("authorization");
+    const applicationForm = await request.json();
+    const token = request.headers.get("authorization");
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/logout`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `refresh_token=${refreshToken}`,
-          Authorization: authHeader || "",
+          Authorization: token || "",
         },
+        body: JSON.stringify(applicationForm),
       }
     );
 
@@ -25,11 +23,7 @@ export async function POST(req: Request) {
     }
 
     const responseBody = await response.json();
-
-    const nextResponse = NextResponse.json(responseBody);
-    nextResponse.cookies.delete("refresh_token");
-
-    return nextResponse;
+    return NextResponse.json(responseBody);
   } catch (error) {
     console.error(error);
     return NextResponse.json(

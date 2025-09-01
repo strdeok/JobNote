@@ -1,25 +1,16 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  const authHeader = req.headers.get("authorization");
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/withdraw`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `access_token=${accessToken}`,
+          Authorization: authHeader || "",
         },
       }
     );
