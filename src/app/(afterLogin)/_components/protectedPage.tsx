@@ -17,6 +17,7 @@ export default function AuthInitializer() {
             window.location.replace("/login");
           });
         } catch (error) {
+          throw error;
         } finally {
           setInitialized(true);
         }

@@ -2,6 +2,7 @@
 
 import LoadingSpinner from "@/app/_components/loadingSpinner";
 import { useUserInfo } from "@/hooks/useUser";
+import Image from "next/image";
 
 export default function UserInfo() {
   const { data, error, isLoading } = useUserInfo();
@@ -19,10 +20,11 @@ export default function UserInfo() {
         <LoadingSpinner />
       ) : (
         <>
-          <img
+          <Image
             src={data?.avatarUrl}
+            alt="avatar"
             className="bg-[#BFBFBF] rounded-full size-16"
-          ></img>
+          ></Image>
           <span className="text-2xl font-medium">{data?.nickname}</span>
         </>
       )}
