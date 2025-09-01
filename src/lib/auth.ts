@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // 로그인 요청
 export const login = async (email: string, password: string) => {
-  const res = await axios.post("/api/v1/users/login", { email, password });
+  const res = await axios.post("/api/auth/login", { email, password });
   const token = res.headers?.authorization;
 
   if (token) {
@@ -48,7 +48,7 @@ export const logout = async () => {
 export const fetchUserInfo = async () => {
   const token = useAuthStore.getState().token;
 
-  const res = await axios.get(`api/auth/profile`, {
+  const res = await axios.get(`/api/auth/profile`, {
     withCredentials: true,
     headers: { Authorization: `Bearer ${token}` },
   });
