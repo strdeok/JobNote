@@ -31,7 +31,7 @@ export default function SetNickNameScreen() {
         ) : (
           <>
             <input
-              type="password"
+              type="text"
               placeholder="변경하실 닉네임을 입력해주세요."
               className="w-full border border-[#D9D9D9] py-1 rounded-xs pl-2"
               onChange={(e) => {

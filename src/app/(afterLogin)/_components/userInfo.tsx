@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import LoadingSpinner from "@/app/_components/loadingSpinner";
 import { useUserInfo } from "@/hooks/useUser";
-import Image from "next/image";
+import DefaultAvatarIcon from "@/assets/User.svg";
 
 export default function UserInfo() {
   const { data, error, isLoading } = useUserInfo();
@@ -20,11 +21,18 @@ export default function UserInfo() {
         <LoadingSpinner />
       ) : (
         <>
-          <Image
-            src={data?.avatarUrl}
-            alt="avatar"
-            className="bg-[#BFBFBF] rounded-full size-16"
-          ></Image>
+          <div className="relative flex justify-center items-center bg-[#BFBFBF] rounded-full size-16">
+            {data?.avatarUrl ? (
+              <Image
+                fill
+                src={data?.avatarUrl}
+                alt="avatar"
+                className="bg-[#BFBFBF] rounded-full size-16"
+              />
+            ) : (
+              <DefaultAvatarIcon />
+            )}
+          </div>
           <span className="text-2xl font-medium">{data?.nickname}</span>
         </>
       )}
