@@ -5,6 +5,7 @@ import Header from "./_components/header";
 import InfoChangeModal from "./_components/infoChangeScreen/infoChangeModal";
 import PageTitle from "./_components/pageTitle";
 import SideNavigation from "./_components/sideNav";
+import ProtectedPage from "./_components/protectedPage";
 
 export default function AfterLoginLayout({
   children,
@@ -14,6 +15,7 @@ export default function AfterLoginLayout({
   const [isModal, setIsModal] = useState(false);
   return (
     <>
+      <ProtectedPage />
       <Header />
       <PageTitle />
       <SideNavigation setIsModal={setIsModal} />
