@@ -1,19 +1,27 @@
 "use client";
 
-import PlusIcon from "@/assets/Plus.svg";
+import Link from "next/link";
+import { formatDate } from "date-fns";
+import { useDocuments } from "@/hooks/useDocuments";
 import VersionBadge from "./_components/versionBadge";
 import UploadButton from "./_components/uploadButton";
 import CompanyNameBadge from "./_components/companyNameBadge";
-import Link from "next/link";
 import Divider from "./_components/divider";
-import { useDocuments } from "@/hooks/useDocuments";
+import PlusIcon from "@/assets/Plus.svg";
 import LoadingSpinner from "@/app/_components/loadingSpinner";
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 interface DocumentType {
   id: number;
   type: string;
   title: string;
   lastModifiedDate: string;
+  latestVersion: number;
   applicationForms: {
     id: string;
     companyName: string;
@@ -24,14 +32,13 @@ interface DocumentType {
 
 export default function DocumentsPage() {
   const { data, error, isLoading } = useDocuments();
-
-  const documents = data?.data?.data?.documents ?? [];
+  const documents = data?.data?.data.content ?? [];
 
   const th_style = "relative text-center p-4 font-medium";
   const td_stytle = "text-center p-4";
   return (
     <>
-      <div className="flex flex-row justify-between items-center mt-8">
+      <div className={`${roboto.className} flex flex-row justify-between items-center mt-8`}>
         <h2 className="text-3xl font-medium">나의 문서 목록</h2>
         <Link
           href="/documents/new"
@@ -85,23 +92,31 @@ export default function DocumentsPage() {
                     <Link href={`/documents/${doc.id}`}>{doc.title}</Link>
                   </td>
                   <td className={td_stytle}>
-                    <VersionBadge>V1</VersionBadge>
+                    <VersionBadge>{doc.latestVersion}</VersionBadge>
                   </td>
                   <td>
                     <UploadButton />
                   </td>
                   <td className={td_stytle}>
                     <div className="flex flex-row gap-2 justify-center flex-wrap">
-                      {doc.applicationForms.map((history) => {
-                        return (
-                          <CompanyNameBadge key={history.companyName}>
-                            {history.companyName}
-                          </CompanyNameBadge>
-                        );
-                      })}
+                      {doc.applicationForms.length === 0 ? (
+                        <span className="text-sm">
+                          아직 연동된 회사가 없습니다.
+                        </span>
+                      ) : (
+                        doc.applicationForms.map((history) => {
+                          return (
+                            <CompanyNameBadge key={history.companyName}>
+                              {history.companyName}
+                            </CompanyNameBadge>
+                          );
+                        })
+                      )}
                     </div>
                   </td>
-                  <td className={td_stytle}>{doc.lastModifiedDate}</td>
+                  <td className={`${td_stytle} text-[#616161]`}>
+                    {formatDate(new Date(doc.lastModifiedDate), "yyyy.MM.dd")}
+                  </td>
                 </tr>
               );
             })}
