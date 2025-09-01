@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+
 
 export async function POST(
   req: Request,
@@ -7,24 +7,15 @@ export async function POST(
 ) {
   const { documentId } = await params;
   const body = await req.json();
+  const authHeader = req.headers.get("authorization");
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents/upload/${documentId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `access_token=${accessToken}`,
+          Authorization: authHeader || "",
         },
         body: JSON.stringify(body),
       }

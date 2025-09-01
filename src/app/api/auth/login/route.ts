@@ -20,17 +20,17 @@ export async function POST(request: Request) {
       return NextResponse.json(errorData, { status: response.status });
     }
 
-    // 2. 백엔드 응답에서 'Set-Cookie' 헤더 추출
-    const setCookieHeader = response.headers.get("set-cookie");
+    const nextResponse = NextResponse.json(response);
 
-    if (!setCookieHeader) {
-      throw new Error("Set-Cookie header not found in backend response.");
+    console.log(response.headers);
+
+    const authHeader = response.headers.get("Authorization");
+    const authRefreshToken = response.headers.get("set-cookie");
+
+    if (authHeader && authRefreshToken) {
+      nextResponse.headers.set("Authorization", authHeader);
+      nextResponse.headers.set("set-cookie", authRefreshToken);
     }
-
-    const responseBody = await response.json();
-
-    const nextResponse = NextResponse.json(responseBody);
-    nextResponse.headers.set("Set-Cookie", setCookieHeader);
 
     return nextResponse;
   } catch (error) {

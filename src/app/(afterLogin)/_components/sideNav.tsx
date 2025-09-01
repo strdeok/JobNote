@@ -5,12 +5,18 @@ import ClipboardText from "@/assets/ClipboardText.svg";
 import House from "@/assets/House.svg";
 import UserInfo from "./userInfo";
 
-export default function SideNavigation() {
+export default function SideNavigation({
+  setIsModal,
+}: {
+  setIsModal: (value: boolean) => void;
+}) {
   return (
     <div className="fixed top-32 left-11 border border-[#FFE8CC] rounded-lg px-10 py-8 flex flex-col items-center bg-white">
       <UserInfo />
 
-      <button className="mt-4 text-main border border-[#FF9016] px-4 py-1">
+      <button onClick={()=>{
+        setIsModal(true);
+      }} className="mt-4 text-main border border-[#FF9016] px-4 py-1">
         개인정보수정
       </button>
 

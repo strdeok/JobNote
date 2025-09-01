@@ -1,23 +1,18 @@
+import { NextRequest, NextResponse } from "next/server";
 
-import { NextResponse } from "next/server";
-
-export async function POST(request: Request) {
-  const { fileName, contentType, fileSize } = await request.json();
-  const authHeader = request.headers.get("authorization");
+export async function PATCH(request: NextRequest) {
   try {
+    const body = await request.json();
+    const authHeader = request.headers.get("authorization");
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/s3/presigned`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/avatar`,
       {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: authHeader || "",
         },
-        body: JSON.stringify({
-          fileName,
-          contentType,
-          fileSize,
-        }),
+        body: JSON.stringify({ avatarUrl: body.avatarUrl }),
       }
     );
 
@@ -31,7 +26,7 @@ export async function POST(request: Request) {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: `Presigned URL 발급 실패 ${error}` },
+      { message: `An unexpected error occurred. ${error}` },
       { status: 500 }
     );
   }

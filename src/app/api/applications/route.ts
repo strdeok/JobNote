@@ -1,27 +1,19 @@
-// app/api/login/route.ts
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const applicationForm = await request.json();
+    const token = request.headers.get("authorization");
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/logout`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: token || "",
         },
+        body: JSON.stringify(applicationForm),
       }
     );
 
@@ -31,10 +23,7 @@ export async function POST() {
     }
 
     const responseBody = await response.json();
-
-    const nextResponse = NextResponse.json(responseBody);
-
-    return nextResponse;
+    return NextResponse.json(responseBody);
   } catch (error) {
     console.error(error);
     return NextResponse.json(

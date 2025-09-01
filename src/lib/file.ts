@@ -1,11 +1,17 @@
+import { useAuthStore } from "@/store/auth/authStore";
 import axios from "axios";
 
 export const uploadFile = async (
   file: File,
   fileInfo: { fileName: string; contentType: string; fileSize: number }
 ) => {
+  const token = useAuthStore.getState().token;
+
   const presignedRes = await axios.post(`/api/v1/s3/presigned`, fileInfo, {
     withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const presignedUrl: string = presignedRes.data.data.presignedUrl;
@@ -25,6 +31,6 @@ export const uploadFile = async (
 
   return {
     fileUrl,
-    fileKey
+    fileKey,
   };
 };
