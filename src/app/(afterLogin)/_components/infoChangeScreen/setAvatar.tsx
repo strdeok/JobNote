@@ -24,9 +24,6 @@ export default function SetAvatarScreen() {
       console.error(err);
     }
   };
-  console.log("pending" + isPending);
-  console.log("error" + error);
-  console.log("isSuccess" + isSuccess);
   return (
     <div className="h-full p-8">
       <label htmlFor="avatar-file">
