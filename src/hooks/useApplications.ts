@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   deleteApplication,
@@ -24,16 +24,16 @@ export const useUploadApplications = () => {
 };
 
 // 전체 가져오기
-export const useFetchAllApplications = () => {
+export const useFetchAllApplications = (page: number, searchQuery: string) => {
   return useQuery({
-    queryKey: ["applications"],
-    queryFn: fetchAllApplications,
+    queryKey: ["applications", page, searchQuery],
+    queryFn: () => fetchAllApplications(page),
+    placeholderData: keepPreviousData,
     retry: 1,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });
 };
-
 // 단일 가져오기
 export const useFetchApplication = (applicationId: number) => {
   return useQuery({
@@ -47,7 +47,7 @@ export const useFetchApplication = (applicationId: number) => {
 // 상태 업데이트
 export const useUpdateApplication = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: updateApplication,
     onSuccess: () => {

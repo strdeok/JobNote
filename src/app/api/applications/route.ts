@@ -36,16 +36,22 @@ export async function POST(request: Request) {
 export async function GET(req: Request) {
   try {
     const token = req.headers.get("authorization");
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token || "",
-        },
-      }
+    const { searchParams } = new URL(req.url);
+    const page = searchParams.get("page");
+
+    // URL을 동적으로 구성
+    const apiUrl = new URL(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms`
     );
+    if (page) apiUrl.searchParams.append("page", page);
+
+    const response = await fetch(apiUrl.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token || "",
+      },
+    });
 
     if (!response.ok) {
       const errorData = await response.json();

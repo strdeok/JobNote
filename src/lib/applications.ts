@@ -19,7 +19,7 @@ export const uploadApplications = async (applicationForm: object) => {
 };
 
 // 지원서 목록 조회
-export const fetchAllApplications = async () => {
+export const fetchAllApplications = async (page: number = 0) => {
   const accessToken = useAuthStore.getState().token;
 
   try {
@@ -28,8 +28,9 @@ export const fetchAllApplications = async () => {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
+      params: { page },
     });
-    return res;
+    return res.data;
   } catch (error) {
     throw error;
   }
