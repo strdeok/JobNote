@@ -192,7 +192,7 @@ export default function NewApplicationsPage() {
       <div className="mt-6 flex flex-row gap-4 w-3xl">
         {/* 지원일 */}
         <div className="flex flex-col w-full gap-2">
-          <label>지원일</label>
+          <label><span className="text-[#FF4D4F]">*</span>지원일</label>
           <DatePicker
             locale={ko}
             placeholderText="날짜를 선택해주세요."
@@ -205,7 +205,7 @@ export default function NewApplicationsPage() {
 
         {/* 마감일 */}
         <div className="flex flex-col w-full gap-2">
-          <label>마감일</label>
+          <label><span className="text-[#FF4D4F]">*</span>마감일</label>
           <DatePicker
             locale={ko}
             placeholderText="날짜를 선택해주세요."
