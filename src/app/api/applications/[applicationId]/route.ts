@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { applicationId: number } }
+  { params }: { params: Promise<{ applicationId: string }> }
 ) {
   try {
     const token = request.headers.get("authorization");
-    const { applicationId } = params;
+    const { applicationId } = await params;
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms/${applicationId}`,
@@ -40,8 +40,6 @@ export async function PUT(request: Request) {
     const applicationForm = await request.json();
     const token = request.headers.get("authorization");
 
-    console.log(applicationForm)
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms/${applicationForm.id}`,
       {
@@ -71,36 +69,36 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(
-      request: Request,
-      { params }: { params: { applicationId: number } }
-    ) {
-      try {
-        const token = request.headers.get("authorization");
-        const { applicationId } = params;
-    
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms/${applicationId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token || "",
-            },
-          }
-        );
-    
-        if (!response.ok) {
-          const errorData = await response.json();
-          return NextResponse.json(errorData, { status: response.status });
-        }
-    
-        const responseBody = await response.json();
-        return NextResponse.json(responseBody);
-      } catch (error) {
-        console.error(error);
-        return NextResponse.json(
-          { message: "An unexpected error occurred." },
-          { status: 500 }
-        );
+  request: Request,
+  { params }: { params: { applicationId: number } }
+) {
+  try {
+    const token = request.headers.get("authorization");
+    const { applicationId } = params;
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms/${applicationId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token || "",
+        },
       }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return NextResponse.json(errorData, { status: response.status });
     }
+
+    const responseBody = await response.json();
+    return NextResponse.json(responseBody);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: "An unexpected error occurred." },
+      { status: 500 }
+    );
+  }
+}
