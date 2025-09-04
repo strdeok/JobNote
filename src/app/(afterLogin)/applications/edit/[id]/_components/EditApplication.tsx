@@ -13,8 +13,7 @@ import {
 } from "@/hooks/useApplications";
 import {
   ApplicationStatus,
-  CompanyApplication,
-  CompanyApplicationWithId, // CompanyApplicationWithId 타입을 import 합니다.
+  CompanyApplicationWithId,
   ScheduleStatus,
   typeLabels,
 } from "@/type/applicationType";
@@ -29,7 +28,9 @@ export default function EditApplicationsPage({ id }: { id: number }) {
   const [status, setStatus] = useState<ApplicationStatus>(
     ApplicationStatus.PLANNED
   );
-  const [selectedDocuments, setSelectedDocuments] = useState<any[]>([]);
+  const [selectedDocuments, setSelectedDocuments] = useState<
+    { id: number; type: string; title: string }[]
+  >([]);
   const [applyDate, setApplyDate] = useState<Date | null>(null);
   const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
@@ -59,8 +60,12 @@ export default function EditApplicationsPage({ id }: { id: number }) {
     setPosition(app.position ?? "");
     setStatus(app.status ?? ApplicationStatus.PLANNED);
 
-    const apply = app.schedules?.find((s: any) => s.title === "지원일");
-    const deadline = app.schedules?.find((s: any) => s.title === "마감일");
+    const apply = app.schedules?.find(
+      (s: { title: string }) => s.title === "지원일"
+    );
+    const deadline = app.schedules?.find(
+      (s: { title: string }) => s.title === "마감일"
+    );
     setApplyDate(apply?.dateTime ? new Date(apply.dateTime) : null);
     setDeadlineDate(deadline?.dateTime ? new Date(deadline.dateTime) : null);
 
@@ -119,14 +124,14 @@ export default function EditApplicationsPage({ id }: { id: number }) {
     changedApplication.documents = selectedDocuments;
 
     const applySchedule = changedApplication.schedules.find(
-      (s: any) => s.title === "지원일"
+      (s: { title: string }) => s.title === "지원일"
     );
     if (applySchedule) {
       applySchedule.dateTime = applyDate ? applyDate.toISOString() : "";
     }
 
     const deadlineSchedule = changedApplication.schedules.find(
-      (s: any) => s.title === "마감일"
+      (s: { title: string }) => s.title === "마감일"
     );
     if (deadlineSchedule) {
       deadlineSchedule.dateTime = deadlineDate
@@ -294,11 +299,7 @@ export default function EditApplicationsPage({ id }: { id: number }) {
                   key={document.id}
                   onClick={() => toggleDocument(document)}
                   className={`px-4 py-5 border text-sm text-center flex flex-col justify-center items-center gap-3 rounded-sm cursor-pointer transition
-                    ${
-                      isSelected
-                        ? "border-[#FF9016]"
-                        : "border-[#D9D9D9]"
-                    }`}
+                    ${isSelected ? "border-[#FF9016]" : "border-[#D9D9D9]"}`}
                 >
                   <span className="flex flex-row items-center gap-1 text-[#212121]">
                     <FileIcon />

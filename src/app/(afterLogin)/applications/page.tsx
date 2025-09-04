@@ -144,14 +144,15 @@ export default function ApplicationsPage() {
               {filteredApplications.length > 0 ? (
                 filteredApplications.map((app: CompanyApplicationWithId) => {
                   const resume = app.documents?.find(
-                    (doc: any) => doc.type === "RESUME"
+                    (doc) => doc.type === "RESUME"
                   );
                   const portfolio = app.documents?.find(
-                    (doc: any) => doc.type === "PORTFOLIO"
+                    (doc) => doc.type === "PORTFOLIO"
                   );
                   const deadline =
-                    app.schedules?.find((s: any) => s.title === "마감일")
-                      ?.dateTime || null;
+                    app.schedules?.find(
+                      (s: { title: string }) => s.title === "마감일"
+                    )?.dateTime || null;
                   const companyLink = formatUrl(app.companyUrl);
 
                   return (

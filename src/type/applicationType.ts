@@ -22,6 +22,7 @@ export const typeLabels: Record<string, string> = {
 export interface Document {
   id: number;
   title?: string;
+  type?: string;
 }
 
 export interface Schedule {
@@ -47,5 +48,5 @@ export interface CompanyApplication {
 }
 
 export interface CompanyApplicationWithId extends CompanyApplication {
-  id: number; 
+  id: number;
 }
