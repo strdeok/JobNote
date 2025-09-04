@@ -70,11 +70,11 @@ export async function PUT(request: Request) {
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { applicationId: number } }
+  { params }: { params: Promise<{ applicationId: string }> }
 ) {
   try {
     const token = request.headers.get("authorization");
-    const { applicationId } = params;
+    const { applicationId } = await params;
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/application-forms/${applicationId}`,
