@@ -13,6 +13,7 @@ export const useUserInfo = () => {
     queryFn: fetchUserInfo,
     retry: 1,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 60,
   });
 };
 
@@ -31,13 +32,11 @@ export const useResetPassword = () => {
 
 // 닉네임 변경
 export const useNickname = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (nickname: string) => setNickName(nickname),
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.error(error);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
     },
   });
 };
@@ -48,21 +47,14 @@ export const usePatchUserAvatar = () => {
   return useMutation({
     mutationFn: setUserAvatar,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
     },
   });
 };
-
 
 // 회원탈퇴
 export const useDeleteUser = () => {
   return useMutation({
     mutationFn: withdraw,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 };
