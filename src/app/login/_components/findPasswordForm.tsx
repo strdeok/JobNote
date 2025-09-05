@@ -1,6 +1,7 @@
 "use client";
 
 import CloseIcon from "@/assets/Close.svg";
+import { findPassword } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -27,6 +28,7 @@ export default function FindPasswordForm() {
 
   const sendFindPasswordEmail = () => {
     console.log(email);
+    findPassword(email);
     setIsSuccessSending(true);
   };
 
@@ -40,12 +42,20 @@ export default function FindPasswordForm() {
           <br /> 메일이 도착하지 않았다면, 스팸함도 함께 확인해 주세요.
         </span>
 
-        <button
-          onClick={() => router.back()}
-          className="bg-[#FF9016] text-white w-full rounded-xs py-1"
-        >
-          로그인으로 돌아가기
-        </button>
+        <div className="flex flex-col gap-2 w-full">
+          <button
+            onClick={() => router.push("/reset-password")}
+            className="bg-[#FF9016] text-white w-full rounded-xs py-1"
+          >
+            비밀번호 재설정하기
+          </button>
+          <button
+            onClick={() => router.back()}
+            className="bg-gray-300 text-gray-700 w-full rounded-xs py-1"
+          >
+            로그인으로 돌아가기
+          </button>
+        </div>
       </>
     );
   } else
@@ -62,7 +72,7 @@ export default function FindPasswordForm() {
           className="absolute top-4 right-4"
           onClick={() => router.back()}
         >
-          <CloseIcon />
+          <CloseIcon width={24} height={24} />
         </button>
 
         <div className="w-full flex flex-col">

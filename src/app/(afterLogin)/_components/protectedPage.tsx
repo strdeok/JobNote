@@ -30,11 +30,8 @@ export default function ProtectedPage({ children }: Props) {
 
       const checkAuth = async () => {
         try {
-          await reissue().then((res) => {
-            console.log(res);
-          });
-        } catch (error) {
-          console.log(error);
+          await reissue();
+        } catch {
           window.location.replace("/login");
           return;
         } finally {
