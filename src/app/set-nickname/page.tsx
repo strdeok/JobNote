@@ -9,15 +9,16 @@ export default function SetNicknamePage() {
   const email = searchParams.get("email") || "";
   const [nickname, setNickname] = useState("");
 
+  const mutation = useSocialSignUp();
+
   const handleSubmit = () => {
     if (!nickname) return;
-    const mutation = useSocialSignUp();
 
     mutation.mutate(
       { email: email, nickname: nickname },
       {
         onSuccess: () => {
-          window.location.href = "/dashboard";
+          window.location.replace("/dashboard");
         },
         onError: (error) => {
           console.error(error);

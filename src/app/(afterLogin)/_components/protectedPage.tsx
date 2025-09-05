@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, ReactNode, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/auth/authStore";
 import { reissue } from "@/lib/auth";
 
@@ -23,7 +23,7 @@ export default function ProtectedPage({ children }: Props) {
         try {
           await reissue();
         } catch {
-          window.location.href = "/login";
+          window.location.replace("/login");
           return;
         } finally {
           setInitialized(true);
@@ -31,7 +31,9 @@ export default function ProtectedPage({ children }: Props) {
 
         const signUpRequired = searchParams.get("sign-up-required");
         if (signUpRequired === "true") {
-          window.location.href = `/set-nickname?email=${searchParams.get("email")}`;
+          window.location.replace(`/set-nickname?email=${searchParams.get(
+            "email"
+          )}`);
           return;
         }
 
