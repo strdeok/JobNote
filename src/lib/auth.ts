@@ -65,9 +65,19 @@ export const kakaoLogin = () => {
   window.location.href = `${API_URL}/oauth2/authorization/kakao`;
 };
 
-
-// 소셜 회원가입 요청 
-export const socialSignUp = async (email: string, nickname: string) => {  
+// 소셜 회원가입 요청
+export const socialSignUp = async (email: string, nickname: string) => {
   const res = await axios.post(`/api/auth/social-signup`, { email, nickname });
+  return res.data;
+};
+
+// 비밀번호 찾기 이메일 보내기
+export const findPassword = async (email: string) => {
+  const token = useAuthStore.getState().token;
+  const res = await axios.post(
+    `/api/auth/find-password/email`,
+    {email},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
   return res.data;
 };
