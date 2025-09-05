@@ -1,31 +1,48 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, ReactNode, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/auth/authStore";
 import { reissue } from "@/lib/auth";
 
-export default function AuthInitializer() {
-  const { setInitialized } = useAuthStore();
-  const initialized = useRef(false);
-  useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
+interface Props {
+  children: ReactNode;
+}
 
-      const initializeAuth = async () => {
+export default function ProtectedPage({ children }: Props) {
+  const searchParams = useSearchParams();
+  const { isInitialized, setInitialized } = useAuthStore();
+  const initializedRef = useRef(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+
+      const checkAuth = async () => {
         try {
-          await reissue().catch(() => {
-            window.location.replace("/login");
-          });
-        } catch (error) {
-          throw error;
+          await reissue();
+        } catch {
+          window.location.href = "/login";
+          return;
         } finally {
           setInitialized(true);
         }
+
+        const signUpRequired = searchParams.get("sign-up-required");
+        if (signUpRequired === "true") {
+          window.location.href = `/set-nickname?email=${searchParams.get("email")}`;
+          return;
+        }
+
+        setLoading(false);
       };
 
-      initializeAuth();
+      checkAuth();
     }
-  }, [setInitialized]);
+  }, [searchParams, setInitialized]);
 
-  return null;
+  if (loading || !isInitialized) return null;
+
+  return <>{children}</>;
 }

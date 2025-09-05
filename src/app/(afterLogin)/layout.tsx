@@ -15,12 +15,15 @@ export default function AfterLoginLayout({
   const [isModal, setIsModal] = useState(false);
   return (
     <>
-      <ProtectedPage />
-      <Header />
-      <PageTitle />
-      <SideNavigation setIsModal={setIsModal} />
-      {isModal && <InfoChangeModal isModal={isModal} setIsModal={setIsModal} />}
-      <div className="ml-80 pr-16">{children}</div>
+      <ProtectedPage>
+        <Header />
+        <PageTitle />
+        <SideNavigation setIsModal={setIsModal} />
+        {isModal && (
+          <InfoChangeModal isModal={isModal} setIsModal={setIsModal} />
+        )}
+        <div className="ml-80 pr-16">{children}</div>
+      </ProtectedPage>
     </>
   );
 }

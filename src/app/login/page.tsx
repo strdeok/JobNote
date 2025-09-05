@@ -12,7 +12,7 @@ export default function LoginPage() {
         <div id="title" className="flex flex-col items-center mb-8">
           <div className="flex flex-row items-center gap-2 mb-2">
             <Building />
-            <h1 className="font-bold text-4xl">Joblink</h1>
+            <h1 className="font-bold text-4xl text-[#485C8B]">Jobnote</h1>
           </div>
           <span className="text-xs">내 커리어 관리의 시작</span>
         </div>
