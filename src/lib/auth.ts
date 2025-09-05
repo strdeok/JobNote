@@ -64,3 +64,10 @@ export const googleLogin = () => {
 export const kakaoLogin = () => {
   window.location.href = `${API_URL}/oauth2/authorization/kakao`;
 };
+
+
+// 소셜 회원가입 요청 
+export const socialSignUp = async (email: string, nickname: string) => {  
+  const res = await axios.post(`/api/auth/social-signup`, { email, nickname });
+  return res.data;
+};
