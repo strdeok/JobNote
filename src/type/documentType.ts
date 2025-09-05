@@ -4,4 +4,19 @@ export interface DocumentType {
   fileKey: string;
   fileType: string;
   fileSize: number;
+  fileUrl?: string;
+  version?: number;
+}
+export interface DocumentTypeWithId {
+  id: number;
+  type: string;
+  title: string;
+  lastModifiedDate: string;
+  latestVersion: number;
+  applicationForms: {
+    id: string;
+    companyName: string;
+    companyAddress: string;
+    status: string;
+  }[];
 }

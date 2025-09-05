@@ -1,42 +1,164 @@
+"use client";
+
 import PlusCircleIcon from "@/assets/PlusCircle.svg";
 import Divider from "../../_components/divider";
 import DownloadIcon from "@/assets/Download.svg";
 import UploadIcon from "@/assets/Upload.svg";
+import Link from "next/link";
+import { useDocumentStore } from "@/store/documents/documentStore";
+import { ApplicationStatus, Document } from "@/type/applicationType";
+import { DocumentType } from "@/type/documentType";
+import TrashIcon from "@/assets/Trash.svg";
+import { fetchApplication } from "@/lib/applications";
+import { useUpdateApplication } from "@/hooks/useApplications";
 
-export default function DocumentDescription() {
-  const companies = [
-    {
-      name: "카카오 엔터프라이즈",
-      location: "서울특별시 ~~~",
-      status: "지원완료",
-    },
-  ];
+const getStatusText = (status: ApplicationStatus): string => {
+  switch (status) {
+    case ApplicationStatus.PLANNED:
+      return "지원 예정";
+    case ApplicationStatus.APPLIED:
+      return "지원 완료";
+    case ApplicationStatus.DOCUMENT_PASSED:
+      return "서류 합격";
+    case ApplicationStatus.FINAL_PASSED:
+      return "최종 합격";
+    case ApplicationStatus.REJECTED:
+      return "불합격";
+    default:
+      return status;
+  }
+};
 
-  const th_style = "relative text-center p-4 font-medium";
-  const td_stytle = "text-center p-4";
+const getTypeText = (type: string): string => {
+  switch (type) {
+    case "RESUME":
+      return "이력서";
+    case "COVER_LETTER":
+      return "자기소개서";
+    case "PORTFOLIO":
+      return "포트폴리오";
+    default:
+      return type;
+  }
+};
+
+export default function DocumentDescription({
+  documentVersions,
+}: {
+  documentVersions: DocumentType[];
+}) {
+  const activeDocument = useDocumentStore((state) => state.document);
+  const setDocument = useDocumentStore((state) => state.setDocument);
+
+  const { mutateAsync } = useUpdateApplication();
+
+  const handleDownload = async (fileUrl: string, fileName: string) => {
+    if (!fileUrl) {
+      alert("다운로드할 수 있는 파일 URL이 없습니다.");
+      return;
+    }
+
+    try {
+      const response = await fetch(fileUrl);
+      if (!response.ok) {
+        throw new Error("파일을 다운로드하는 데 실패했습니다.");
+      }
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", fileName || "document");
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("파일 다운로드 중 오류가 발생했습니다.");
+    }
+  };
+  if (!activeDocument || !activeDocument.applicationForms) {
+    return (
+      <div className="flex-1 flex justify-center items-center">
+        <p>문서 정보를 불러오는데 실패했습니다.</p>
+      </div>
+    );
+  }
+
+  const handleDeleteCompany = async (companyIdToDelete: string) => {
+    try {
+      const { data: application } = await fetchApplication(
+        Number(companyIdToDelete)
+      );
+
+      const updatedDocuments = application.data.documents.filter(
+        (doc: Document) => doc.id !== activeDocument.id
+      );
+
+      const updatedApplication = {
+        ...application.data,
+        documents: updatedDocuments,
+      };
+
+      mutateAsync({
+        changedApplication: updatedApplication,
+        applicationId: activeDocument.id,
+      });
+
+      const updatedApplicationForms = activeDocument.applicationForms.filter(
+        (application) => application.id !== companyIdToDelete
+      );
+
+      const updatedActiveDocument = {
+        ...activeDocument,
+        applicationForms: updatedApplicationForms,
+      };
+
+      setDocument(updatedActiveDocument);
+
+      alert("지원 정보가 성공적으로 삭제되었습니다.");
+    } catch (error) {
+      console.error("Failed to delete company:", error);
+      alert("지원 정보 삭제 중 오류가 발생했습니다.");
+    }
+  };
+
+  const companies = activeDocument.applicationForms;
+
+  const th_style = "relative text-center py-2 font-normal";
+  const td_stytle = "text-center py-2";
+
   return (
     <div className="flex-1 flex flex-col justify-between">
-      
-
       <div className="flex flex-col gap-4">
-        <h2 className="text-3xl mb-6">이력서</h2>
-        {companies.map((company, index) => {
+        <h2 className="text-3xl mb-6">{activeDocument.title}</h2>
+        {companies?.map((company) => {
+          const statusText = getStatusText(company.status as ApplicationStatus);
           return (
-            <section key={company.name + index} className="border border-[#747474] rounded-sm px-5 py-2.5 flex flex-col gap-5">
+            <section
+              key={company.id}
+              className="border border-[#747474] rounded-sm px-5 py-2.5 flex flex-col gap-5"
+            >
               <div className="flex flex-row justify-between items-center">
-                <div className="flex flex-row gap-4 items-center">
-                  <h3 className="font-semibold text-2xl">{company.name}</h3>
-                  <span className="text-xs bg-[#66B5FF] text-white px-2 py-1 rounded-xs">
-                    {company.status}
-                  </span>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-row gap-4 items-center">
+                    <h3 className="font-semibold text-2xl">
+                      {company.companyName}
+                    </h3>
+                    <span className="text-xs bg-[#485C8B] text-white px-2 py-1 rounded-xs">
+                      {statusText}
+                    </span>
+                  </div>
+                  <span className="">주소: {company.companyAddress}</span>
                 </div>
 
-                <button className="text-white bg-[#FF4D4F] px-2 py-px text-sm rounded-xs">
-                  삭제
+                <button onClick={() => handleDeleteCompany(company.id)}>
+                  <TrashIcon />
                 </button>
               </div>
-
-              <span className="">주소: {company.location}</span>
             </section>
           );
         })}
@@ -46,7 +168,7 @@ export default function DocumentDescription() {
       </div>
 
       <div>
-        <h3 className="font-medium text-3xl">버전 관리</h3>
+        <h3 className="font-medium text-3xl mt-14 mb-10">버전 관리</h3>
 
         <table className="w-full table-fixed text-sm">
           <thead>
@@ -71,23 +193,49 @@ export default function DocumentDescription() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className={td_stytle}>이력서</td>
-              <td className={td_stytle}>Version1</td>
-              <td className={td_stytle}>이력서</td>
-              <td className={td_stytle}>2025/01/01</td>
-              <td className={td_stytle}>
-                <button>
-                  <DownloadIcon />
-                </button>
-              </td>
-            </tr>
+            {documentVersions.map((documentVersion) => {
+              return (
+                <tr
+                  className="border border-[#E0E0E0]"
+                  key={documentVersion.fileKey}
+                >
+                  <td className={td_stytle}>{documentVersion.fileName}</td>
+                  <td className={td_stytle}>
+                    Version {documentVersion.version}
+                  </td>
+                  <td className={td_stytle + " flex justify-center"}>
+                    <div className="bg-[#BFC7DA] w-14 rounded-xs">
+                      {getTypeText(activeDocument.type)}
+                    </div>
+                  </td>
+                  <td className={td_stytle}>
+                    {/* {new Date(documentVersion.lastModifiedDate).toLocaleDateString()} */}
+                  </td>
+                  <td className={td_stytle}>
+                    <button
+                      onClick={() => {
+                        handleDownload(
+                          documentVersion.fileUrl || "",
+                          documentVersion.fileName
+                        );
+                      }}
+                    >
+                      <DownloadIcon />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
-        <button className="w-full flex justify-center items-center gap-2 border border-[#D9D9D9] text-sm py-1.5">
-          <UploadIcon /> Upload
-        </button>
+        <Link
+          href={`/documents/update/${activeDocument.id}`}
+          className="w-full flex justify-center items-center gap-2 border border-[#D9D9D9] text-sm py-1.5"
+        >
+          <UploadIcon />
+          Upload
+        </Link>
       </div>
     </div>
   );
