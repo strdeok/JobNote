@@ -19,22 +19,26 @@ export default function ProtectedPage({ children }: Props) {
     if (!initializedRef.current) {
       initializedRef.current = true;
 
+      const signUpRequired = searchParams.get("sign-up-required");
+
+      if (signUpRequired === "true") {
+        window.location.replace(
+          `/set-nickname?email=${searchParams.get("email")}`
+        );
+        return;
+      }
+
       const checkAuth = async () => {
         try {
-          await reissue();
-        } catch {
+          await reissue().then((res) => {
+            console.log(res);
+          });
+        } catch (error) {
+          console.log(error);
           window.location.replace("/login");
           return;
         } finally {
           setInitialized(true);
-        }
-
-        const signUpRequired = searchParams.get("sign-up-required");
-        if (signUpRequired === "true") {
-          window.location.replace(`/set-nickname?email=${searchParams.get(
-            "email"
-          )}`);
-          return;
         }
 
         setLoading(false);
