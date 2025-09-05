@@ -53,7 +53,8 @@ export default function ResetPasswordForm() {
       password === confirmPassword &&
       validatePassword(password)
     ) {
-      resetPassword(password).then(() => {
+      if (!token) return;
+      resetPassword(password, token).then(() => {
         console.log("비밀번호 재설정:", password);
         setIsSuccess(true);
       });
