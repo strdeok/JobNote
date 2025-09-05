@@ -17,7 +17,7 @@ export const getDocuments = async () => {
 // 문서 모든 버전 목록 조회
 export const getDocumentById = async (id: string) => {
   const token = useAuthStore.getState().token;
-  const res = await axios.get(`${API_URL}/api/v1/documents/${id}`, {
+  const res = await axios.get(`/api/documents/${id}`, {
     withCredentials: true,
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -44,8 +44,8 @@ export const createDocument = async (fileInfo: {
 export const uploadDocument = async (id: string, fileInfo: DocumentType) => {
   const token = useAuthStore.getState().token;
   const res = await axios.post(
-    `${API_URL}/api/v1/documents/upload/${id}`,
-    { fileInfo },
+    `/api/documents/update/${id}`,
+     fileInfo ,
     {
       withCredentials: true,
       headers: { Authorization: `Bearer ${token}` },
