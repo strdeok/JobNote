@@ -1,20 +1,28 @@
-import { createDocument, deleteDocument, getDocumentById, getDocuments, uploadDocument } from "@/lib/documents";
+import {
+  createDocument,
+  deleteDocument,
+  getDocumentById,
+  getDocuments,
+  uploadDocument,
+} from "@/lib/documents";
 import { DocumentType } from "@/type/documentType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useDocuments = () => {
   return useQuery({
-    queryKey: ["documents"], // 캐시 키
-    queryFn: getDocuments, // 호출할 함수
+    queryKey: ["documents"],
+    queryFn: getDocuments,
+    staleTime: 1000 * 60 * 60,
   });
 };
 
 // 문서 상세 조회 훅
 export const useDocument = (id: string) => {
   return useQuery({
-    queryKey: ["documents", id], // 특정 문서 캐시 키
-    queryFn: () => getDocumentById(id), // id 기반 조회
-    enabled: !!id, // id 없으면 호출 안 함
+    queryKey: ["documents", id],
+    queryFn: () => getDocumentById(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 60,
   });
 };
 
@@ -31,13 +39,12 @@ export const useCreateDocument = () => {
 };
 
 // 새로운 버전 업로드 훅
-export const useUploadDocument = () => {
+export const useUpdateDocument = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, fileInfo }: { id: string; fileInfo: DocumentType }) =>
       uploadDocument(id, fileInfo),
     onSuccess: (_, variables) => {
-      // 해당 문서 상세 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ["documents", variables.id] });
     },
   });

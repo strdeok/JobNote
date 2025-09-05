@@ -72,6 +72,22 @@ ul {
   background-color: #dfdfdf;
 }
 
+/* 최소화된 스크롤바 */
+.minimal-scrollbar::-webkit-scrollbar {
+  width: 0.25rem; /* 가로/세로 막대 폭 최소화 */
+  height: 0.25rem;
+  background-color: transparent; /* 배경은 투명 */
+}
+
+.minimal-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3); /* 살짝 보이는 색 */
+  border-radius: 9999px; /* 둥글게 */
+}
+
+.minimal-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent; /* 트랙은 투명 */
+}
+
 .font-gmarket {
   font-family: "GmarketSansBold";
 }
