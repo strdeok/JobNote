@@ -214,7 +214,7 @@ export default function DocumentDescription({
                     </div>
                   </td>
                   <td className={td_stytle}>
-                    {new Date(documentVersion.createdDate).toLocaleDateString()}
+                    {new Date(documentVersion.createdDate!).toLocaleDateString()}
                   </td>
                   <td className={td_stytle}>
                     <button
