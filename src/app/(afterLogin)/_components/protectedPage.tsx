@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, ReactNode, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, ReactNode } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth/authStore";
 import { reissue, socialLogin } from "@/lib/auth";
 
@@ -10,18 +10,36 @@ interface Props {
 }
 
 export default function ProtectedPage({ children }: Props) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const { isInitialized, setInitialized } = useAuthStore();
+  const { isInitialized, setInitialized, setToken, token } = useAuthStore();
   const initializedRef = useRef(false);
-  const [loading, setLoading] = useState(true);
-
-  const code = searchParams.get("code");
 
   useEffect(() => {
-    if (!initializedRef.current) {
-      initializedRef.current = true;
+    if (initializedRef.current || isInitialized) return;
+    initializedRef.current = true;
 
-      const signUpRequired = searchParams.get("sign-up-required");
+    const code = searchParams.get("code");
+    const signUpRequired = searchParams.get("sign-up-required");
+
+    const initializeAuth = async () => {
+      if (code) {
+        try {
+          const res = await socialLogin(code);
+          const accessToken = res?.headers?.authorization;
+          if (accessToken) {
+            setToken(accessToken);
+          }
+
+          router.replace("/dashboard", { scroll: false });
+        } catch (error) {
+          console.error("Social login failed:", error);
+          window.location.replace("/login");
+        } finally {
+          setInitialized(true);
+        }
+        return;
+      }
 
       if (signUpRequired === "true") {
         window.location.replace(
@@ -30,34 +48,25 @@ export default function ProtectedPage({ children }: Props) {
         return;
       }
 
-      if (code) {
-        socialLogin(code)
-          .then(() => {
-            setInitialized(true);
-          })
-          .catch(() => {
-            window.location.replace("/login");
-          });
+      if (token) {
+        setInitialized(true);
+        return;
       }
 
-      const checkAuth = async () => {
-        try {
-          await reissue();
-        } catch {
-          window.location.replace("/login");
-          return;
-        } finally {
-          setInitialized(true);
-        }
+      try {
+        await reissue();
+      } catch (error) {
+        console.error("Reissue failed:", error);
+        window.location.replace("/login");
+      } finally {
+        setInitialized(true);
+      }
+    };
 
-        setLoading(false);
-      };
+    initializeAuth();
+  }, []);
 
-      checkAuth();
-    }
-  }, [searchParams, setInitialized]);
-
-  if (loading || !isInitialized) return null;
+  if (!isInitialized) return null;
 
   return <>{children}</>;
 }
