@@ -26,7 +26,7 @@ export default function ProtectedPage({ children }: Props) {
       if (code) {
         try {
           const res = await socialLogin(code);
-          const accessToken = res.headers.authorization;
+          const accessToken = res?.headers?.authorization;
           if (accessToken) {
             setToken(accessToken);
           }
