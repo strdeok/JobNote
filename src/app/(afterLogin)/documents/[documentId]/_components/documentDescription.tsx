@@ -135,36 +135,41 @@ export default function DocumentDescription({
     <div className="flex-1 flex flex-col justify-between">
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl mb-6">{activeDocument.title}</h2>
-        {companies?.map((company) => {
-          const statusText = getStatusText(company.status as ApplicationStatus);
-          return (
-            <section
-              key={company.id}
-              className="border border-[#747474] rounded-sm px-5 py-2.5 flex flex-col gap-5"
-            >
-              <div className="flex flex-row justify-between items-center">
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-row gap-4 items-center">
-                    <h3 className="font-semibold text-2xl">
-                      {company.companyName}
-                    </h3>
-                    <span className="text-xs bg-[#485C8B] text-white px-2 py-1 rounded-xs">
-                      {statusText}
-                    </span>
+        {companies.length === 0 ? (
+          <span className="text-sm text-center">
+            아직 연동된 회사가 없습니다.
+          </span>
+        ) : (
+          companies?.map((company) => {
+            const statusText = getStatusText(
+              company.status as ApplicationStatus
+            );
+            return (
+              <section
+                key={company.id}
+                className="border border-[#747474] rounded-sm px-5 py-2.5 flex flex-col gap-5"
+              >
+                <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-row gap-4 items-center">
+                      <h3 className="font-semibold text-2xl">
+                        {company.companyName}
+                      </h3>
+                      <span className="text-xs bg-[#485C8B] text-white px-2 py-1 rounded-xs">
+                        {statusText}
+                      </span>
+                    </div>
+                    <span className="">주소: {company.companyAddress}</span>
                   </div>
-                  <span className="">주소: {company.companyAddress}</span>
-                </div>
 
-                <button onClick={() => handleDeleteCompany(company.id)}>
-                  <TrashIcon />
-                </button>
-              </div>
-            </section>
-          );
-        })}
-        <button className="border border-[#747474] rounded-sm flex justify-center py-3">
-          <PlusCircleIcon />
-        </button>
+                  <button onClick={() => handleDeleteCompany(company.id)}>
+                    <TrashIcon />
+                  </button>
+                </div>
+              </section>
+            );
+          })
+        )}
       </div>
 
       <div>
@@ -209,7 +214,7 @@ export default function DocumentDescription({
                     </div>
                   </td>
                   <td className={td_stytle}>
-                    {/* {new Date(documentVersion.lastModifiedDate).toLocaleDateString()} */}
+                    {new Date(documentVersion.createdDate).toLocaleDateString()}
                   </td>
                   <td className={td_stytle}>
                     <button
@@ -228,14 +233,6 @@ export default function DocumentDescription({
             })}
           </tbody>
         </table>
-
-        <Link
-          href={`/documents/update/${activeDocument.id}`}
-          className="w-full flex justify-center items-center gap-2 border border-[#D9D9D9] text-sm py-1.5"
-        >
-          <UploadIcon />
-          Upload
-        </Link>
       </div>
     </div>
   );
