@@ -65,9 +65,19 @@ export const kakaoLogin = () => {
   window.location.href = `${API_URL}/oauth2/authorization/kakao`;
 };
 
-
-// 소셜 회원가입 요청 
-export const socialSignUp = async (email: string, nickname: string) => {  
+// 소셜 회원가입 요청
+export const socialSignUp = async (email: string, nickname: string) => {
   const res = await axios.post(`/api/auth/social-signup`, { email, nickname });
+  return res.data;
+};
+
+// 소셜 로그인 요청
+export const socialLogin = async (code: string) => {
+  console.log(code);
+  const res = await axios.post(`/api/auth/social-login`, { code: code }, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return res.data;
 };
