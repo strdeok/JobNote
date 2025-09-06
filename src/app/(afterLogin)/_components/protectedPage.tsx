@@ -3,7 +3,7 @@
 import { useEffect, useRef, ReactNode, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/auth/authStore";
-import { reissue } from "@/lib/auth";
+import { reissue, socialLogin } from "@/lib/auth";
 
 interface Props {
   children: ReactNode;
@@ -14,6 +14,8 @@ export default function ProtectedPage({ children }: Props) {
   const { isInitialized, setInitialized } = useAuthStore();
   const initializedRef = useRef(false);
   const [loading, setLoading] = useState(true);
+
+  const code = searchParams.get("code");
 
   useEffect(() => {
     if (!initializedRef.current) {
@@ -26,6 +28,16 @@ export default function ProtectedPage({ children }: Props) {
           `/set-nickname?email=${searchParams.get("email")}`
         );
         return;
+      }
+
+      if (code) {
+        socialLogin(code)
+          .then(() => {
+            setInitialized(true);
+          })
+          .catch(() => {
+            window.location.replace("/login");
+          });
       }
 
       const checkAuth = async () => {
