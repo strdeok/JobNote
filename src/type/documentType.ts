@@ -6,7 +6,7 @@ export interface DocumentType {
   fileSize: number;
   fileUrl?: string;
   version?: number;
-  createdDate: string;
+  createdDate?: string;
 }
 export interface DocumentTypeWithId {
   id: number;
