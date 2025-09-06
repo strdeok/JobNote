@@ -71,6 +71,17 @@ export const socialSignUp = async (email: string, nickname: string) => {
   return res.data;
 };
 
+
+// 소셜 로그인 요청
+export const socialLogin = async (code: string) => {
+  console.log(code);
+  const res = await axios.post(`/api/auth/social-login`, { code: code }, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 // 비밀번호 찾기 이메일 보내기
 export const findPassword = async (email: string) => {
   const token = useAuthStore.getState().token;
