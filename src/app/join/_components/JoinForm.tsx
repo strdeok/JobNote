@@ -142,7 +142,7 @@ export default function JoinForm() {
 
   return (
     <form
-      className="flex flex-col w-full gap-8 text-sm"
+      className="flex flex-col w-full gap-4 text-sm"
       onSubmit={(e) => {
         submitSignUp(e);
       }}
@@ -227,37 +227,33 @@ export default function JoinForm() {
       </div>
 
       {/* 전체동의 */}
-      <div className={checkBox}>
+      <div className={checkBox + " mt-4"}>
         <label
           htmlFor="all-agree"
           onClick={toggleAllAgree}
-          className={checkButton}
+          className={checkButton + " flex items-center gap-1"}
         >
           {allAgree ? <FilledCheckCircle /> : <EmptyCheckCircle />}
+          <span>전체동의</span>
         </label>
         <input type="checkbox" id="all-agree" className="hidden" />
-        <label htmlFor="all-agree">전체동의</label>
       </div>
 
       {/* (필수) 서비스 이용약관 동의 */}
       <div>
         <div className={checkBoxWrapper}>
-          <div className={checkBox}>
-            <label
-              htmlFor="agree1"
-              onClick={() => {
-                setFirstAgree((prev) => !prev);
-              }}
-              className={checkButton}
-            >
-              {firstAgree ? <FilledCheckCircle /> : <EmptyCheckCircle />}
-            </label>
-            <input type="checkbox" id="agree1" className="hidden" />
-            <label htmlFor="agree1">
-              <span className="text-[#FF9016]">(필수)</span>서비스 이용 약관
+          {/* 체크박스 + 텍스트를 한 라벨로 묶음 */}
+          <label
+            className={`${checkBox} ${checkButton}`}
+            onClick={() => setFirstAgree((prev) => !prev)}
+          >
+            {firstAgree ? <FilledCheckCircle /> : <EmptyCheckCircle />}
+            <span>
+              <span className="text-[#FF9016]">(필수)</span> 서비스 이용 약관
               동의
-            </label>
-          </div>
+            </span>
+          </label>
+
           <button
             type="button"
             onClick={() => setShowServiceTerms((prev) => !prev)}
@@ -270,7 +266,7 @@ export default function JoinForm() {
         <div
           className={`overflow-scroll transition-all duration-300 ease-in-out custom-scrollbar rounded-sm ${
             showServiceTerms
-              ? "max-h-[22.5rem] opacity-100 mt-2" // 22.5rem = 360px
+              ? "max-h-[22.5rem] opacity-100 mt-2"
               : "max-h-0 opacity-0"
           }`}
         >
@@ -281,22 +277,17 @@ export default function JoinForm() {
       {/* (필수) 개인정보 수집 및 이용 동의 */}
       <div>
         <div className={checkBoxWrapper}>
-          <div className={checkBox}>
-            <label
-              htmlFor="agree2"
-              onClick={() => {
-                setSecondAgree((prev) => !prev);
-              }}
-              className={checkButton}
-            >
-              {secondAgree ? <FilledCheckCircle /> : <EmptyCheckCircle />}
-            </label>
-            <input type="checkbox" id="agree2" className="hidden" />
-            <label htmlFor="agree2">
-              <span className="text-[#FF9016]">(필수)</span>개인정보 수집 및
+          <label
+            className={`${checkBox} ${checkButton}`}
+            onClick={() => setSecondAgree((prev) => !prev)}
+          >
+            {secondAgree ? <FilledCheckCircle /> : <EmptyCheckCircle />}
+            <span>
+              <span className="text-[#FF9016]">(필수)</span> 개인정보 수집 및
               이용 동의
-            </label>
-          </div>
+            </span>
+          </label>
+
           <button
             type="button"
             onClick={() => setShowPrivacyTerms((prev) => !prev)}
