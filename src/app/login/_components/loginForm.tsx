@@ -82,7 +82,7 @@ export default function LoginForm() {
           setEmailError("");
         }}
         onBlur={handleEmailBlur}
-        className={`w-66 h-8 border border-[#D9D9D9] rounded-sm text-sm text-[#424242] pl-3 ${
+        className={`w-full h-8 border border-[#D9D9D9] rounded-sm text-sm text-[#424242] pl-3 ${
           emailError ? "border-[#FA4343] shadow-[0_0_0_2px_#fa434333]" : ""
         }`}
         required
@@ -102,7 +102,7 @@ export default function LoginForm() {
             setPasswordError("");
           }}
           onBlur={passwordBlur}
-          className={`w-66 h-8 border border-[#D9D9D9] rounded-sm text-sm text-[#424242] pl-3 pr-6 ${
+          className={`w-full h-8 border border-[#D9D9D9] rounded-sm text-sm text-[#424242] pl-3 pr-6 ${
             passwordError ? "border-[#FA4343] shadow-[0_0_0_2px_#fa434333]" : ""
           }`}
           required
@@ -130,7 +130,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        className={`w-66 h-8   rounded-xs shadow-[0_2px_0_rgba(0,0,0,0.043)] ${
+        className={`w-full h-8   rounded-xs shadow-[0_2px_0_rgba(0,0,0,0.043)] ${
           isDisabled ? "border border-[#D9D9D9]" : "bg-[#FF9016] text-white"
         }`}
         disabled={isDisabled}

@@ -43,6 +43,12 @@ export default function DocumentsPage() {
     }
   }, [isAdding]);
 
+  useEffect(() => {
+    if (!isLoading && documents.length === 0) {
+      setIsAdding(true);
+    }
+  }, [isLoading, documents]);
+
   const handleRoute = (doc: DocumentTypeWithId) => {
     useDocumentStore.setState({ document: doc });
     router.push(`/documents/${doc.id}`);
@@ -50,8 +56,10 @@ export default function DocumentsPage() {
 
   const handleBlur = () => {
     if (newDocumentTitle === "") {
-      setIsAdding(false);
-      setNewDocumentTitle("");
+      if (documents.length > 0) {
+        setIsAdding(false);
+        setNewDocumentTitle("");
+      }
     }
   };
 
@@ -73,8 +81,10 @@ export default function DocumentsPage() {
   };
 
   const handleCancelAdd = () => {
-    setIsAdding(false);
-    setNewDocumentTitle("");
+    if (documents.length > 0) {
+      setIsAdding(false);
+      setNewDocumentTitle("");
+    }
   };
 
   const th_style = "relative text-center p-4 font-medium";
@@ -96,7 +106,7 @@ export default function DocumentsPage() {
           에러가 발생하였습니다. <br /> 잠시 후 시도해주세요.
         </div>
       )}
-      {data && (
+      {data && !isLoading && (
         <table className="table-fixed w-full border-collapse mt-4">
           <thead>
             <tr className="border-b border-b-black/5 bg-[#FAFAFA]">
@@ -119,19 +129,10 @@ export default function DocumentsPage() {
             </tr>
           </thead>
           <tbody>
-            {documents.map((doc: DocumentTypeWithId, index: number) => {
+            {documents.map((doc: DocumentTypeWithId) => {
               return (
                 <tr key={doc.id} className="border-b border-b-black/5">
-                  <td className={td_stytle}>
-                    {index === documents.length - 1 && !isAdding && (
-                      <button
-                        onClick={handleAddDocument}
-                        className="p-0.5 border border-[#D9D9D9] flex justify-center items-center rounded-xs"
-                      >
-                        <PlusIcon fill="#000000" />
-                      </button>
-                    )}
-                  </td>
+                  <td className={td_stytle}></td>
                   <td className={td_stytle}>
                     <button onClick={() => handleRoute(doc)}>
                       {doc.title}
@@ -174,7 +175,7 @@ export default function DocumentsPage() {
               );
             })}
 
-            {isAdding && (
+            {isAdding ? (
               <tr className="border-b border-b-black/5 bg-gray-50">
                 <td className={td_stytle}></td>
                 <td className={td_stytle}>
@@ -211,16 +212,34 @@ export default function DocumentsPage() {
                   >
                     저장
                   </button>
+                  {documents.length > 0 && (
+                    <button
+                      className={`bg-main text-white text-sm rounded-xs px-2 py-px ${
+                        isPending ? "opacity-50" : ""
+                      }`}
+                      disabled={isPending}
+                      onClick={handleCancelAdd}
+                    >
+                      취소
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ) : (
+              <tr className="border-b border-b-black/5">
+                <td className={td_stytle}>
                   <button
-                    className={`bg-main text-white text-sm rounded-xs px-2 py-px ${
-                      isPending ? "opacity-50" : ""
-                    }`}
-                    disabled={isPending}
-                    onClick={handleCancelAdd}
+                    onClick={handleAddDocument}
+                    className="p-0.5 border border-[#D9D9D9] flex justify-center items-center rounded-xs"
                   >
-                    취소
+                    <PlusIcon fill="#000000" />
                   </button>
                 </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
               </tr>
             )}
           </tbody>

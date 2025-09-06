@@ -35,11 +35,11 @@ export default function PageTitle() {
   const message = () => {
     switch (currentSegment) {
       case "applications":
-        return "지원 현황";
+        return "회사별 지원 진행 상황과 제출 문서를 정리해보세요";
       case "documents":
         return "문서를 업로드하고, 버전별로 체계적으로 관리하세요";
       case "schedule":
-        return "일정";
+        return "지원일정을 한눈에 관리하세요";
       default:
         return "";
     }

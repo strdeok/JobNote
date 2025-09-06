@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   useFetchAllApplications,
   useUpdateApplication,
+  useDeleteApplication,
 } from "@/hooks/useApplications";
 import Divider from "../documents/_components/divider";
 import LoadingSpinner from "@/app/_components/loadingSpinner";
 import SearchIcon from "@/assets/Search.svg";
 import PlusIcon from "@/assets/Plus.svg";
 import { CompanyApplicationWithId } from "@/type/applicationType";
-import DropDownButton from "./_components/dropDonwButton";
+import PencilSimpleIcon from "@/assets/PencilSimple.svg";
+import TrashSimpleIcon from "@/assets/TrashSimple.svg";
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "-";
@@ -23,33 +26,88 @@ const formatDate = (dateString?: string | null) => {
 };
 
 export default function ApplicationsPage() {
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const { data, isLoading, isError } = useFetchAllApplications(
+  const { data, isLoading, isError, refetch } = useFetchAllApplications(
     page,
     searchQuery
   );
-  const { mutate } = useUpdateApplication();
+  const { mutate: updateMutate } = useUpdateApplication();
+  const { mutateAsync: deleteMutateAsync } = useDeleteApplication();
 
-  const applications = data?.data.content;
-
+  const applications = data?.data.content ?? [];
   const pageInfo = data?.data;
+  const filteredApplications = applications;
 
-  const filteredApplications = useMemo(() => {
-    if (!searchQuery) {
-      return applications;
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [page, searchQuery]);
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      const allIds = filteredApplications.map((app: CompanyApplicationWithId) =>
+        app.id.toString()
+      );
+      setSelectedIds(allIds);
+    } else {
+      setSelectedIds([]);
     }
-    return applications.filter((app: CompanyApplicationWithId) =>
-      app.companyName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, applications]);
+  };
+  const handleSelectOne = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: string
+  ) => {
+    if (e.target.checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
+    }
+  };
+
+  const handleEdit = () => {
+    if (selectedIds.length !== 1) {
+      alert("수정할 항목을 하나만 선택해주세요.");
+      return;
+    }
+    router.push(`/applications/edit/${selectedIds[0]}`);
+  };
+
+  const handleDelete = async () => {
+    if (selectedIds.length === 0) {
+      alert("삭제할 항목을 선택해주세요.");
+      return;
+    }
+    if (
+      window.confirm(
+        `선택된 ${selectedIds.length}개의 항목을 삭제하시겠습니까?`
+      )
+    ) {
+      const deletePromises = selectedIds.map((id) =>
+        deleteMutateAsync(Number(id))
+      );
+
+      try {
+        await Promise.all(deletePromises);
+
+        alert("선택된 항목이 모두 삭제되었습니다.");
+        setSelectedIds([]);
+        refetch();
+      } catch (error) {
+        alert("일부 항목 삭제에 실패했습니다. 페이지를 새로고침합니다.");
+        refetch();
+      }
+    }
+  };
 
   const handlePrevPage = () => setPage((prev) => Math.max(prev - 1, 0));
   const handleNextPage = () =>
-    setPage((prev) => Math.min(prev + 1, pageInfo.totalPages - 1));
+    setPage((prev) =>
+      pageInfo ? Math.min(prev + 1, pageInfo.totalPages - 1) : prev
+    );
 
-  // 특정 페이지 클릭
   const handlePageClick = (i: number) => setPage(i);
 
   const th_style = "relative text-center p-4 text-sm font-medium";
@@ -60,7 +118,7 @@ export default function ApplicationsPage() {
     status: string
   ) => {
     const changedApp = { ...app, status };
-    mutate(
+    updateMutate(
       { applicationId: app.id, changedApplication: changedApp },
       {
         onError: () => {
@@ -80,7 +138,7 @@ export default function ApplicationsPage() {
 
   return (
     <>
-      <div className="flex flex-row justify-end items-center gap-2 mt-8">
+      <div className="flex flex-row justify-between items-center gap-2 mt-8">
         <div className="border border-[#D9D9D9] rounded-sm flex items-center">
           <input
             type="text"
@@ -88,18 +146,40 @@ export default function ApplicationsPage() {
             className="px-2 py-1 outline-none"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter"}
           />
           <button className="px-2 py-1 border-l border-l-[#D9D9D9]">
             <SearchIcon />
           </button>
         </div>
-        <Link
-          href="/applications/new"
-          className="flex flex-row items-center border gap-2.5 border-main bg-white rounded-sm text-main py-1.5 px-2.5"
-        >
-          <PlusIcon width={14} height={14} fill={"#FF9016"} /> 지원내역 등록
-        </Link>
+
+        <div className="flex flex-row items-center gap-2">
+          <Link
+            href="/applications/new"
+            className="w-8 h-8 flex flex-row items-center justify-center border border-[#FF9016] rounded-sm"
+          >
+            <PlusIcon width={14} height={14} fill={"#FF9016"} />
+          </Link>
+          <button
+            onClick={handleEdit}
+            className={`w-8 h-8 flex flex-row justify-center items-center border rounded-xs ${
+              selectedIds.length === 1 ? "border-[#485C8B]" : "border-[#9E9E9E]"
+            }`}
+          >
+            <PencilSimpleIcon
+              fill={selectedIds.length === 1 ? "#485C8B" : "#9e9e9e"}
+            />
+          </button>
+          <button
+            onClick={handleDelete}
+            className={`w-8 h-8 flex flex-row justify-center items-center border rounded-xs ${
+              selectedIds.length > 0 ? "border-[#FA4343]" : "border-[#9E9E9E]"
+            }`}
+          >
+            <TrashSimpleIcon
+              fill={selectedIds.length > 0 ? "#FA4343" : "#9e9e9e"}
+            />
+          </button>
+        </div>
       </div>
 
       {isLoading && (
@@ -120,16 +200,27 @@ export default function ApplicationsPage() {
             <thead>
               <tr className="border-b border-b-black/5 bg-[#FAFAFA]">
                 <th className={th_style}>
+                  <input
+                    type="checkbox"
+                    onChange={handleSelectAll}
+                    checked={
+                      filteredApplications.length > 0 &&
+                      selectedIds.length === filteredApplications.length
+                    }
+                  />
+                  <Divider />
+                </th>
+                <th className={th_style}>
                   회사명 <Divider />
                 </th>
                 <th className={th_style}>
                   지역 <Divider />
                 </th>
                 <th className={th_style}>
-                  이력서 <Divider />
+                  연동 문서 <Divider />
                 </th>
                 <th className={th_style}>
-                  포트폴리오 <Divider />
+                  직무 <Divider />
                 </th>
                 <th className={th_style}>
                   마감일 <Divider />
@@ -137,18 +228,12 @@ export default function ApplicationsPage() {
                 <th className={th_style}>
                   상태 <Divider />
                 </th>
-                <th className={th_style}></th>
+                <th className={th_style}>지원 날짜</th>
               </tr>
             </thead>
             <tbody>
               {filteredApplications.length > 0 ? (
                 filteredApplications.map((app: CompanyApplicationWithId) => {
-                  const resume = app.documents?.find(
-                    (doc) => doc.type === "RESUME"
-                  );
-                  const portfolio = app.documents?.find(
-                    (doc) => doc.type === "PORTFOLIO"
-                  );
                   const deadline =
                     app.schedules?.find(
                       (s: { title: string }) => s.title === "마감일"
@@ -157,24 +242,51 @@ export default function ApplicationsPage() {
 
                   return (
                     <tr
-                      key={app.id ?? app.companyName}
-                      className="border-b border-b-black/5"
+                      key={app.id}
+                      className={`border-b border-b-black/5 ${
+                        selectedIds.includes(app.id.toString())
+                          ? "bg-orange-50"
+                          : ""
+                      }`}
                     >
+                      <td className={td_style}>
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(app.id.toString())}
+                          onChange={(e) =>
+                            handleSelectOne(e, app.id.toString())
+                          }
+                        />
+                      </td>
                       <td className={td_style}>
                         <a
                           href={companyLink}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="hover:underline"
                         >
                           {app.companyName}
                         </a>
                       </td>
                       <td className={td_style}>{app.companyAddress || "-"}</td>
                       <td className={td_style}>
-                        {resume ? resume.title : "-"}
+                        <div className="max-w-[200px] mx-auto overflow-x-auto flex flex-row gap-1 minimal-scrollbar">
+                          {app.documents && app.documents.length > 0 ? (
+                            app.documents.map((doc) => (
+                              <div
+                                className="text-xs bg-[#FFE09B] rounded-sm px-2 py-1 whitespace-nowrap"
+                                key={doc.id}
+                              >
+                                {doc.title}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center w-full">-</div>
+                          )}
+                        </div>
                       </td>
                       <td className={td_style}>
-                        {portfolio ? portfolio.title : "-"}
+                        {app.position ? app.position : "-"}
                       </td>
                       <td className={td_style}>{formatDate(deadline)}</td>
                       <td className={td_style}>
@@ -193,14 +305,16 @@ export default function ApplicationsPage() {
                         </select>
                       </td>
                       <td className={td_style}>
-                        <DropDownButton companyUrl={companyLink} id={app.id} />
+                        {app.schedules
+                          ? formatDate(app.schedules[0]?.dateTime)
+                          : "-"}
                       </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan={7} className="text-center py-10 text-gray-500">
+                  <td colSpan={8} className="text-center py-10 text-gray-500">
                     {searchQuery
                       ? "검색 결과가 없습니다."
                       : "등록된 지원내역이 없습니다."}
@@ -224,7 +338,7 @@ export default function ApplicationsPage() {
                   key={i}
                   onClick={() => handlePageClick(i)}
                   className={`px-3 py-1 border rounded-md ${
-                    page === i ? "bg-main text-white" : ""
+                    page === i ? "bg-orange-500 text-white" : ""
                   }`}
                 >
                   {i + 1}
