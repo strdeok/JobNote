@@ -33,12 +33,12 @@ export const setNickName = async (nickname: string) => {
   }
 };
 
-export const resetPassword = async (newPassword: string) => {
-  const token = useAuthStore.getState().token;
+export const resetPassword = async (newPassword: string, webToken?: string) => {
+  const token = webToken || useAuthStore.getState().token;
   try {
     const res = await axios.patch(
       "/api/users/reset-password",
-      {
+      { 
         newPassword,
       },
       { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
