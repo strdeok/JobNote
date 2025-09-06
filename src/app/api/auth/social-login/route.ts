@@ -5,11 +5,11 @@ export async function POST(request: Request) {
     const { code } = await request.json();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/login/google`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/issue/code`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify({ code }),
       }
     );
 
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
     return nextResponse;
   } catch (error) {
-    console.error("Social login proxy error:", error);
+    throw error;
     return NextResponse.json(
       { message: "An unexpected error occurred." },
       { status: 500 }

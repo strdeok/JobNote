@@ -73,15 +73,13 @@ export const socialSignUp = async (email: string, nickname: string) => {
 
 // 소셜 로그인 요청
 export const socialLogin = async (code: string) => {
-  const res = await axios.post(
-    `/api/auth/social-login`,
-    { code: code },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res = await axios.post(`/api/auth/social-login`, { code: code });
+
+  const token = res.headers?.authorization;
+  if (token) {
+    useAuthStore.getState().setToken(token);
+  }
+
   return res;
 };
 
