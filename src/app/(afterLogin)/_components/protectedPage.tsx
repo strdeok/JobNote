@@ -12,7 +12,7 @@ interface Props {
 export default function ProtectedPage({ children }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isInitialized, setInitialized, setToken, token } = useAuthStore();
+  const { isInitialized, setInitialized, token } = useAuthStore();
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -25,11 +25,7 @@ export default function ProtectedPage({ children }: Props) {
     const initializeAuth = async () => {
       if (code) {
         try {
-          const res = await socialLogin(code);
-          const accessToken = res?.headers?.authorization;
-          if (accessToken) {
-            setToken(accessToken);
-          }
+          await socialLogin(code);
 
           router.replace("/dashboard", { scroll: false });
         } catch (error) {
