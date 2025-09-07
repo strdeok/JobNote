@@ -12,7 +12,7 @@ import Divider from "../documents/_components/divider";
 import LoadingSpinner from "@/app/_components/loadingSpinner";
 import SearchIcon from "@/assets/Search.svg";
 import PlusIcon from "@/assets/Plus.svg";
-import { CompanyApplicationWithId } from "@/type/applicationType";
+import { CompanyApplicationWithId, Schedule } from "@/type/applicationType";
 import PencilSimpleIcon from "@/assets/PencilSimple.svg";
 import TrashSimpleIcon from "@/assets/TrashSimple.svg";
 
@@ -236,9 +236,8 @@ export default function ApplicationsPage() {
                 filteredApplications.map((app: CompanyApplicationWithId) => {
                   const deadline =
                     app.schedules?.find(
-                      (s: { title: string }) => s.title === "마감일"
+                      (s: Schedule) => s.memo && s.memo === "마감일"
                     )?.dateTime || null;
-                  const companyLink = formatUrl(app.companyUrl);
 
                   return (
                     <tr
@@ -259,14 +258,7 @@ export default function ApplicationsPage() {
                         />
                       </td>
                       <td className={td_style}>
-                        <a
-                          href={companyLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline"
-                        >
-                          {app.companyName}
-                        </a>
+                        <span>{app.companyName}</span>
                       </td>
                       <td className={td_style}>{app.companyAddress || "-"}</td>
                       <td className={td_style}>
@@ -291,7 +283,7 @@ export default function ApplicationsPage() {
                       <td className={td_style}>{formatDate(deadline)}</td>
                       <td className={td_style}>
                         <select
-                          className="inline-flex items-center gap-2 border rounded-md px-3 py-1 text-xs"
+                          className="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs hover:cursor-pointer"
                           value={app.status}
                           onChange={(e) => {
                             handleStatusChange(app, e.target.value);
@@ -324,35 +316,33 @@ export default function ApplicationsPage() {
             </tbody>
           </table>
 
-          {pageInfo && pageInfo.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+          <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+            <button
+              onClick={handlePrevPage}
+              disabled={pageInfo.first}
+              className="px-3 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              이전
+            </button>
+            {Array.from({ length: pageInfo.totalPages }, (_, i) => (
               <button
-                onClick={handlePrevPage}
-                disabled={pageInfo.first}
-                className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                key={i}
+                onClick={() => handlePageClick(i)}
+                className={`px-3 py-1 border rounded-md ${
+                  page === i ? "bg-orange-500 text-white" : ""
+                }`}
               >
-                이전
+                {i + 1}
               </button>
-              {Array.from({ length: pageInfo.totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => handlePageClick(i)}
-                  className={`px-3 py-1 border rounded-md ${
-                    page === i ? "bg-orange-500 text-white" : ""
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                onClick={handleNextPage}
-                disabled={pageInfo.last}
-                className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                다음
-              </button>
-            </div>
-          )}
+            ))}
+            <button
+              onClick={handleNextPage}
+              disabled={pageInfo.last}
+              className="px-3 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              다음
+            </button>
+          </div>
         </>
       )}
     </>

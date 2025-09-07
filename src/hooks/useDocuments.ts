@@ -8,10 +8,10 @@ import {
 import { DocumentType } from "@/type/documentType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useDocuments = () => {
+export const useDocuments = (page: number) => {
   return useQuery({
-    queryKey: ["documents"],
-    queryFn: getDocuments,
+    queryKey: ["documents", page],
+    queryFn: () => getDocuments(page),
     staleTime: 1000 * 60 * 60,
   });
 };

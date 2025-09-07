@@ -14,6 +14,12 @@ export const login = async (email: string, password: string) => {
   return res;
 };
 
+// 회원가입 요청
+export const signUp = async (email: string, password: string, nickname: string) => {
+  const res = await axios.post("/api/auth/join", { email, password, nickname });
+  return res;
+};
+
 // 리프레시 토큰 요청
 export const reissue = async () => {
   const res = await axios.post(`/api/v1/users/reissue`, null, {

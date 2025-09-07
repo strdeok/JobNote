@@ -31,7 +31,7 @@ export default function NewApplicationsPage() {
   const [applyDate, setApplyDate] = useState<Date | null>(null);
   const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
-  const { data, isLoading, isError } = useDocuments();
+  const { data, isLoading, isError } = useDocuments(1);
   const documents = data?.data.data.content;
 
   const { mutateAsync, isPending: isUploadLoading } = useUploadApplications();
@@ -75,13 +75,15 @@ export default function NewApplicationsPage() {
       schedules: [
         {
           id: 0,
-          title: "지원일",
+          title: companyName,
+          memo: "지원일",
           dateTime: applyDate ? applyDate.toISOString() : "",
           status: ScheduleStatus.PLANNED,
         },
         {
           id: 1,
-          title: "마감일",
+          title: companyName,
+          memo: "마감일",
           dateTime: deadlineDate ? deadlineDate.toISOString() : "",
           status: getDeadlineStatus(status),
         },
@@ -192,7 +194,9 @@ export default function NewApplicationsPage() {
       <div className="mt-6 flex flex-row gap-4 w-3xl">
         {/* 지원일 */}
         <div className="flex flex-col w-full gap-2">
-          <label><span className="text-[#FF4D4F]">*</span>지원일</label>
+          <label>
+            <span className="text-[#FF4D4F]">*</span>지원일
+          </label>
           <DatePicker
             locale={ko}
             placeholderText="날짜를 선택해주세요."
@@ -205,7 +209,9 @@ export default function NewApplicationsPage() {
 
         {/* 마감일 */}
         <div className="flex flex-col w-full gap-2">
-          <label><span className="text-[#FF4D4F]">*</span>마감일</label>
+          <label>
+            <span className="text-[#FF4D4F]">*</span>마감일
+          </label>
           <DatePicker
             locale={ko}
             placeholderText="날짜를 선택해주세요."
@@ -264,11 +270,7 @@ export default function NewApplicationsPage() {
                   key={document.id}
                   onClick={() => toggleDocument(document.id)}
                   className={`px-4 py-5 border text-sm text-center flex flex-col justify-center items-center gap-3 rounded-sm cursor-pointer transition
-                    ${
-                      isSelected
-                        ? "border-[#FF9016]"
-                        : "border-[#D9D9D9]"
-                    }`}
+                    ${isSelected ? "border-[#FF9016]" : "border-[#D9D9D9]"}`}
                 >
                   <span className="flex flex-row items-center gap-1 text-[#212121]">
                     <FileIcon />
