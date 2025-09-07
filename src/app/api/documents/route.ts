@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 
-
 export async function GET(req: Request) {
   const authHeader = req.headers.get("authorization");
+  const { searchParams } = new URL(req.url);
+  const page = searchParams.get("page");
+
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/documents?page=${page}`,
       {
         method: "GET",
         headers: {
