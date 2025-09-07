@@ -19,7 +19,6 @@ import {
 } from "@/type/applicationType";
 
 export default function EditApplicationsPage({ id }: { id: number }) {
-  // 폼 필드를 위한 상태
   const [companyName, setCompanyName] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
   const [companyUrl, setCompanyUrl] = useState("");
@@ -37,14 +36,13 @@ export default function EditApplicationsPage({ id }: { id: number }) {
   const [originalApplication, setOriginalApplication] =
     useState<CompanyApplicationWithId | null>(null);
 
-  const { data: documentsData, isLoading, isError } = useDocuments();
+  const { data: documentsData, isLoading, isError } = useDocuments(1);
   const { data, isLoading: isAppLoading } = useFetchApplication(id);
   const { mutateAsync, isPending: isUploadLoading } = useUpdateApplication();
 
   const documents = documentsData?.data.data.content;
   const router = useRouter();
 
-  // 데이터 로드 시 상태 초기화
   useEffect(() => {
     if (!data) return;
 
@@ -52,7 +50,6 @@ export default function EditApplicationsPage({ id }: { id: number }) {
 
     setOriginalApplication(app);
 
-    // 폼 필드 상태 업데이트
     setCompanyName(app.companyName ?? "");
     setCompanyAddress(app.companyAddress ?? "");
     setCompanyUrl(app.companyUrl ?? "");
