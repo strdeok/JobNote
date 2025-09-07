@@ -12,7 +12,7 @@ import Divider from "../documents/_components/divider";
 import LoadingSpinner from "@/app/_components/loadingSpinner";
 import SearchIcon from "@/assets/Search.svg";
 import PlusIcon from "@/assets/Plus.svg";
-import { CompanyApplicationWithId } from "@/type/applicationType";
+import { CompanyApplicationWithId, Schedule } from "@/type/applicationType";
 import PencilSimpleIcon from "@/assets/PencilSimple.svg";
 import TrashSimpleIcon from "@/assets/TrashSimple.svg";
 
@@ -236,9 +236,8 @@ export default function ApplicationsPage() {
                 filteredApplications.map((app: CompanyApplicationWithId) => {
                   const deadline =
                     app.schedules?.find(
-                      (s: { title: string }) => s.title === "마감일"
+                      (s: Schedule) => s.memo && s.memo === "마감일"
                     )?.dateTime || null;
-                  const companyLink = formatUrl(app.companyUrl);
 
                   return (
                     <tr
