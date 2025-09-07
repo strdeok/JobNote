@@ -31,7 +31,7 @@ export default function NewApplicationsPage() {
   const [applyDate, setApplyDate] = useState<Date | null>(null);
   const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
-  const { data, isLoading, isError } = useDocuments();
+  const { data, isLoading, isError } = useDocuments(1);
   const documents = data?.data.data.content;
 
   const { mutateAsync, isPending: isUploadLoading } = useUploadApplications();
