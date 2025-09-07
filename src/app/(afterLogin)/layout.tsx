@@ -6,7 +6,6 @@ import InfoChangeModal from "./_components/infoChangeScreen/infoChangeModal";
 import PageTitle from "./_components/pageTitle";
 import SideNavigation from "./_components/sideNav";
 import ProtectedPage from "./_components/protectedPage";
-import LoadingSpinner from "@/app/_components/loadingSpinner";
 
 export default function AfterLoginLayout({
   children,
@@ -16,7 +15,7 @@ export default function AfterLoginLayout({
   const [isModal, setIsModal] = useState(false);
   return (
     <>
-      <Suspense fallback={<LoadingSpinner />}>
+      <Suspense>
         <ProtectedPage>
           <Header />
           <PageTitle />
