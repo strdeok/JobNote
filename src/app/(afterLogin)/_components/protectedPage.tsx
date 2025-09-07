@@ -15,25 +15,24 @@ export default function ProtectedPage({ children }: Props) {
   const { isInitialized, setInitialized, token } = useAuthStore();
   const initializedRef = useRef(false);
 
+  const checkAuth = async () => {
+    if (!token) {
+      await reissue()
+        .then(() => {})
+        .catch(() => {
+          window.location.replace("/login");
+        });
+
+      setInitialized(true);
+    }
+  };
+  
   useEffect(() => {
     if (initializedRef.current || isInitialized) return;
     initializedRef.current = true;
     const code = searchParams.get("code");
     const signUpRequired = searchParams.get("sign-up-required");
-    
-    
-      const checkAuth = async () => {
-        if (!token) {
-          await reissue()
-            .then(() => {})
-            .catch(() => {
-              window.location.replace("/login");
-            });
 
-          setInitialized(true);
-          setLoading(false);
-        }
-      };
 
     const initializeAuth = async () => {
       if (code) {
@@ -62,12 +61,9 @@ export default function ProtectedPage({ children }: Props) {
       } else {
         checkAuth();
       }
-
-     
     };
 
     initializeAuth();
-
   }, []);
 
   if (!isInitialized) return null;
