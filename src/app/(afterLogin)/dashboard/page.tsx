@@ -35,6 +35,30 @@ export default function DashboardPage() {
     new Date(new Date().setDate(new Date().getDate() + 7))
   );
 
+  function getDDay(dateTime: string) {
+    const today = new Date();
+    const targetDate = new Date(dateTime);
+
+
+    const todayOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const targetOnly = new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth(),
+      targetDate.getDate()
+    );
+
+    const diffTime = targetOnly.getTime() - todayOnly.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 0) return `D-${diffDays}`;
+    else if (diffDays === 0) return `D-Day`;
+    else return `D+${Math.abs(diffDays)}`;
+  }
+
   const { data, isLoading } = useFetchAllApplications(0, "");
   const { data: scheduleData, isLoading: scheduleLoading } = useSchedule(
     startDate,
@@ -136,7 +160,7 @@ export default function DashboardPage() {
                 <CalendarIcon />
                 {schedule.title}
                 <div className="text-xs text-main bg-[#FFF2E3] px-2 rounded-full">
-                  D-7
+                  {getDDay(schedule.dateTime)}
                 </div>
               </span>
             </div>
