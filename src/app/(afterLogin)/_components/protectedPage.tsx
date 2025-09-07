@@ -11,39 +11,42 @@ interface Props {
 
 export default function ProtectedPage({ children }: Props) {
   const searchParams = useSearchParams();
-  const { isInitialized, setInitialized } = useAuthStore();
+  const { isInitialized, setInitialized, token } = useAuthStore();
   const initializedRef = useRef(false);
   const [loading, setLoading] = useState(true);
+
+  const checkSocialLogin = () => {
+    const signUpRequired = searchParams.get("sign-up-required");
+
+    if (signUpRequired === "true") {
+      window.location.replace(
+        `/set-nickname?email=${searchParams.get("email")}`
+      );
+      return;
+    }
+  };
 
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true;
 
-      const signUpRequired = searchParams.get("sign-up-required");
-
-      if (signUpRequired === "true") {
-        window.location.replace(
-          `/set-nickname?email=${searchParams.get("email")}`
-        );
-        return;
-      }
-
       const checkAuth = async () => {
-        try {
-          await reissue();
-        } catch {
-          window.location.replace("/login");
-          return;
-        } finally {
-          setInitialized(true);
-        }
+        if (!token) {
+          await reissue()
+            .then(() => {})
+            .catch(() => {
+              window.location.replace("/login");
+            });
 
-        setLoading(false);
+          setInitialized(true);
+          setLoading(false);
+        }
       };
 
+      checkSocialLogin();
       checkAuth();
     }
-  }, [searchParams, setInitialized]);
+  }, []);
 
   if (loading || !isInitialized) return null;
 
