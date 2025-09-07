@@ -19,7 +19,6 @@ import {
 } from "@/type/applicationType";
 
 export default function EditApplicationsPage({ id }: { id: number }) {
-  // 폼 필드를 위한 상태
   const [companyName, setCompanyName] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
   const [companyUrl, setCompanyUrl] = useState("");
@@ -37,22 +36,19 @@ export default function EditApplicationsPage({ id }: { id: number }) {
   const [originalApplication, setOriginalApplication] =
     useState<CompanyApplicationWithId | null>(null);
 
-  const { data: documentsData, isLoading, isError } = useDocuments();
+  const { data: documentsData, isLoading, isError } = useDocuments(1);
   const { data, isLoading: isAppLoading } = useFetchApplication(id);
   const { mutateAsync, isPending: isUploadLoading } = useUpdateApplication();
 
   const documents = documentsData?.data.data.content;
   const router = useRouter();
 
-  // 데이터 로드 시 상태 초기화
   useEffect(() => {
-    if (!data) return;
+    if (!data || originalApplication) return; // 초기 한 번만 세팅
 
     const app = data.data.data;
-
     setOriginalApplication(app);
 
-    // 폼 필드 상태 업데이트
     setCompanyName(app.companyName ?? "");
     setCompanyAddress(app.companyAddress ?? "");
     setCompanyUrl(app.companyUrl ?? "");
@@ -60,17 +56,26 @@ export default function EditApplicationsPage({ id }: { id: number }) {
     setPosition(app.position ?? "");
     setStatus(app.status ?? ApplicationStatus.PLANNED);
 
+    // 지원일
     const apply = app.schedules?.find(
-      (s: { title: string }) => s.title === "지원일"
+      (s: { memo?: string }) => s.memo === "지원일"
     );
+    const applyDateObj = apply?.dateTime ? new Date(apply.dateTime) : null;
+    setApplyDate(isNaN(applyDateObj?.getTime() ?? NaN) ? null : applyDateObj);
+
+    // 마감일
     const deadline = app.schedules?.find(
-      (s: { title: string }) => s.title === "마감일"
+      (s: { memo?: string }) => s.memo === "마감일"
     );
-    setApplyDate(apply?.dateTime ? new Date(apply.dateTime) : null);
-    setDeadlineDate(deadline?.dateTime ? new Date(deadline.dateTime) : null);
+    const deadlineDateObj = deadline?.dateTime
+      ? new Date(deadline.dateTime)
+      : null;
+    setDeadlineDate(
+      isNaN(deadlineDateObj?.getTime() ?? NaN) ? null : deadlineDateObj
+    );
 
     setSelectedDocuments(app.documents ?? []);
-  }, [data]);
+  }, [data, originalApplication]);
 
   // 문서 선택 토글 함수
   const toggleDocument = (doc: { id: number; type: string; title: string }) => {
@@ -124,14 +129,14 @@ export default function EditApplicationsPage({ id }: { id: number }) {
     changedApplication.documents = selectedDocuments;
 
     const applySchedule = changedApplication.schedules.find(
-      (s: { title: string }) => s.title === "지원일"
+      (s: { memo?: string }) => s.memo === "지원일"
     );
     if (applySchedule) {
       applySchedule.dateTime = applyDate ? applyDate.toISOString() : "";
     }
 
     const deadlineSchedule = changedApplication.schedules.find(
-      (s: { title: string }) => s.title === "마감일"
+      (s: { memo?: string }) => s.memo === "마감일"
     );
     if (deadlineSchedule) {
       deadlineSchedule.dateTime = deadlineDate

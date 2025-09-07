@@ -6,14 +6,16 @@ import CalendarBlank from "@/assets/CalendarBlank.svg";
 import ClipboardText from "@/assets/ClipboardText.svg";
 import House from "@/assets/House.svg";
 import UserInfo from "./userInfo";
-import { usePathname } from "next/navigation";
+import { useSelectedLayoutSegments } from "next/navigation";
 
 export default function SideNavigation({
   setIsModal,
 }: {
   setIsModal: (value: boolean) => void;
 }) {
-  const pathname = usePathname();
+  const segments = useSelectedLayoutSegments();
+  const pathname = segments[0];
+
   return (
     <div className="fixed top-32 left-11 border border-[#FFE8CC] rounded-lg px-10 py-8 flex flex-col items-center bg-white">
       <UserInfo />
@@ -31,17 +33,17 @@ export default function SideNavigation({
         <Link
           href="/dashboard"
           className={`flex flex-row gap-2 items-center ${
-            pathname === "/dashboard" ? "font-bold" : ""
+            pathname === "dashboard" ? "font-bold" : ""
           }`}
         >
           <House />
-          dashboard
+          Dashboard
         </Link>
 
         <Link
           href="/applications"
           className={`flex flex-row gap-2 items-center ${
-            pathname === "/applications" ? "font-bold" : ""
+            pathname === "applications" ? "font-bold" : ""
           }`}
         >
           <BriefCase />
@@ -51,7 +53,7 @@ export default function SideNavigation({
         <Link
           href="/documents"
           className={`flex flex-row gap-2 items-center ${
-            pathname === "/documents" ? "font-bold" : ""
+            pathname === "documents" ? "font-bold" : ""
           }`}
         >
           <ClipboardText />
@@ -61,7 +63,7 @@ export default function SideNavigation({
         <Link
           href="/schedule"
           className={`flex flex-row gap-2 items-center ${
-            pathname === "/schedule" ? "font-bold" : ""
+            pathname === "schedule" ? "font-bold" : ""
           }`}
         >
           <CalendarBlank />

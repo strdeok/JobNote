@@ -7,10 +7,12 @@ import EyeInvisible from "@/assets/EyeInvisible.svg";
 import PrivacyPolicy from "./PrivacyPolicy";
 import ServiceTermsSection from "./ServiceTermsSection";
 import { useRouter } from "next/navigation";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { useSignUp } from "@/hooks/useAuth";
 
 export default function JoinForm() {
   const router = useRouter();
+  const { mutate, isPending } = useSignUp();
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -100,7 +102,8 @@ export default function JoinForm() {
     !validatePassword(password) ||
     password2Error !== "" ||
     !firstAgree ||
-    !secondAgree;
+    !secondAgree ||
+    isPending;
 
   const submitSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -110,13 +113,12 @@ export default function JoinForm() {
       nickname: name,
     };
 
-    axios
-      .post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/signup`, data)
-      .then(() => {
+    mutate(data, {
+      onSuccess: () => {
         alert("인증 메일을 발송했습니다. 메일함을 확인해주세요.");
         router.replace("/login");
-      })
-      .catch((err: unknown) => {
+      },
+      onError: (err) => {
         const error = err as AxiosError<{ message: string }>;
         const message = error.response?.data?.message;
 
@@ -130,7 +132,8 @@ export default function JoinForm() {
           default:
             break;
         }
-      });
+      },
+    });
   };
 
   // 스타일 변수

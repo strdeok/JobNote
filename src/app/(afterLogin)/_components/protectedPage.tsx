@@ -15,18 +15,29 @@ export default function ProtectedPage({ children }: Props) {
   const { isInitialized, setInitialized, token } = useAuthStore();
   const initializedRef = useRef(false);
 
+  const checkAuth = async () => {
+    if (!token) {
+      await reissue()
+        .then(() => {})
+        .catch(() => {
+          window.location.replace("/login");
+        });
+
+      setInitialized(true);
+    }
+  };
+  
   useEffect(() => {
     if (initializedRef.current || isInitialized) return;
     initializedRef.current = true;
-
     const code = searchParams.get("code");
     const signUpRequired = searchParams.get("sign-up-required");
+
 
     const initializeAuth = async () => {
       if (code) {
         try {
           await socialLogin(code);
-
           router.replace("/dashboard", { scroll: false });
         } catch (error) {
           console.error("Social login failed:", error);
@@ -47,15 +58,8 @@ export default function ProtectedPage({ children }: Props) {
       if (token) {
         setInitialized(true);
         return;
-      }
-
-      try {
-        await reissue();
-      } catch (error) {
-        console.error("Reissue failed:", error);
-        window.location.replace("/login");
-      } finally {
-        setInitialized(true);
+      } else {
+        checkAuth();
       }
     };
 

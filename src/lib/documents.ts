@@ -5,11 +5,12 @@ import { useAuthStore } from "@/store/auth/authStore";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // 문서 목록 조회
-export const getDocuments = async () => {
+export const getDocuments = async (page: number) => {
   const token = useAuthStore.getState().token;
   const res = await axios.get(`/api/documents`, {
     withCredentials: true,
     headers: { Authorization: `Bearer ${token}` },
+    params: { page },
   });
   return res;
 };

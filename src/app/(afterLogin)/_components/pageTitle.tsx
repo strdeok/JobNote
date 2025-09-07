@@ -1,13 +1,14 @@
 "use client";
 
-import { useSelectedLayoutSegments } from "next/navigation";
+import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import WarningCircleIcon from "@/assets/WarningCircle.svg";
 import MessageBubble from "./messageBubble";
 import { useEffect, useState } from "react";
+import ArrowLeftIcon from "@/assets/ArrowLeft.svg";
 
 export default function PageTitle() {
   const segments = useSelectedLayoutSegments();
-
+  const router = useRouter();
   const [currentSegment, setCurrentSegment] = useState(segments[0]);
   const [isActivateMessage, setIsActivateMessage] = useState(false);
 
@@ -45,12 +46,25 @@ export default function PageTitle() {
     }
   };
 
+  // 뒤로가기 버튼 활성화
+  const isBackButton = () => {
+    if (segments[1]) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div className="bg-[#F5F5F5] w-full h-36 relative">
       <div className="absolute bottom-6 left-80 flex flex-row items-center gap-2">
+        {isBackButton() && (
+          <button onClick={() => router.back()} className="absolute -left-8">
+            <ArrowLeftIcon />
+          </button>
+        )}
         <h1 className="font-medium text-4xl">{title()}</h1>
 
-        {currentSegment !== "dashboard" && (
+        {!isBackButton() &&currentSegment !== "dashboard" && (
           <div className="relative flex items-center">
             <div
               onMouseEnter={() => {

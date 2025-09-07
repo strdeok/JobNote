@@ -20,7 +20,8 @@ const roboto = Roboto({
 });
 
 export default function DocumentsPage() {
-  const { data, error, isLoading } = useDocuments();
+  const [page, setPage] = useState(0);
+  const { data, error, isLoading } = useDocuments(page);
   const documents = data?.data?.data.content ?? [];
   const router = useRouter();
 
@@ -245,6 +246,42 @@ export default function DocumentsPage() {
           </tbody>
         </table>
       )}
+
+      <div className="flex justify-center gap-2 mt-4">
+        <button
+          className="px-3 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={page === 0}
+          onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+        >
+          이전
+        </button>
+
+        {Array.from({ length: data?.data.data.totalPages ?? 0 }).map(
+          (_, idx) => (
+            <button
+              key={idx}
+              className={`px-3 py-1 border rounded-md ${
+                page === idx ? "bg-orange-500 text-white" : ""
+              }`}
+              onClick={() => setPage(idx)}
+            >
+              {idx + 1}
+            </button>
+          )
+        )}
+
+        <button
+          className="px-3 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={page === (data?.data.data.totalPages ?? 1) - 1}
+          onClick={() =>
+            setPage((prev) =>
+              Math.min(prev + 1, (data?.data.data.totalPages ?? 1) - 1)
+            )
+          }
+        >
+          다음
+        </button>
+      </div>
     </>
   );
 }
