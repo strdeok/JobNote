@@ -1,11 +1,9 @@
-// app/api/login/route.ts
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    // 1. 로그인 요청
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/login`,
       {
